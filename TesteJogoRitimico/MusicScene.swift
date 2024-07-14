@@ -8,6 +8,7 @@
 import Foundation
 import SpriteKit
 import AVFoundation
+import UIKit
 
 class MusicScene: SKScene{
     var gameData: GameData?
@@ -28,6 +29,11 @@ class MusicScene: SKScene{
     let remove: SKAction = SKAction.removeFromParent()
     
     var bpm: Int = 120
+    //0,5 player clock vem papel
+    //0,5 pra ele chegar
+    //primeiro 1,5   - 2
+    //segundo 3,5    - 4
+    //(tempo do player - 1,5) % 2,5 == 0 -> vem papel
     var beatCount:Int = 0
     var timerIntervalPerBeat: TimeInterval = 0
     var musicDuration = 0
@@ -37,6 +43,12 @@ class MusicScene: SKScene{
     var renderPaper = true
     var objectCount = 0
     var scorePoints = 0
+    
+    var time: Float = 0
+    
+//    let initialTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { timer in
+//        let musicTimer = Timer.scheduledTimer(timeInterval: 2.5, repeats: true)/*, target: self, selector: #selector(fazPapel()), userInfo: nil*/
+//    }
     
     override func didMove(to view: SKView) {
         startGame()
@@ -53,7 +65,6 @@ class MusicScene: SKScene{
         
         playSound("Metronomo","wav")
         //MARK: Musica inicia
-        //timer pika
         
         player?.pause()
         player?.prepareToPlay()
@@ -108,8 +119,6 @@ class MusicScene: SKScene{
         }
     }
     
-    //MARK: Cria papeis
-    //TODO: Cria papeis
     func createPaper(){
         objectCount = Int(player!.duration)/2
     }
@@ -159,20 +168,22 @@ class MusicScene: SKScene{
         if !play{
             play = true
             player?.play()
-            
+                        
             //MARK: Inicia player
         }
         
-        //MARK: falta math
-        if floor(player!.currentTime.truncatingRemainder(dividingBy: 2)) == 1 && renderPaper && objectCount != 0{
+        time = Float(player!.currentTime + 0.5)
+        
+        // MARK: falta math
+        if floor((time.truncatingRemainder(dividingBy: 2))) == 0 && renderPaper && objectCount != 0 {
+            
             objectCount -= 1
             gameData?.create(factory: PaperFactory())
-            print("device clock:\(floor(player!.deviceCurrentTime))")
-            print("player clock:\(floor(player!.currentTime))")
-            //print(player?.rate)
             renderLast()
             renderPaper = false
-        }else if floor(player!.currentTime.truncatingRemainder(dividingBy: 2)) == 0{
+            
+        }
+        else if floor(time.truncatingRemainder(dividingBy: 2)) == 1{
             renderPaper = true
         }
         
@@ -211,5 +222,9 @@ class MusicScene: SKScene{
 //        scorePoints = 0
 //        scoreLabel = SKLabelNode(text: "Score: 0")
 //        gameData?.objects.removeAll()
+    }
+    
+    @objc func papel(){
+        renderPaper = true
     }
 }

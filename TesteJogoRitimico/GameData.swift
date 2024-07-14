@@ -27,7 +27,7 @@ import UIKit
     }
    
     func create(factory: GOFactory){
-        let object: GameObject = factory.createGameObject(position: CGPoint(x: -paper.size.width, y: UIScreen.main.bounds.height/2) )
+        let object: GameObject = factory.createGameObject(position: CGPoint(x: 0/*-paper.size.width*/, y: UIScreen.main.bounds.height/2) )
         objects.append(object)
         
     }
