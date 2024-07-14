@@ -13,6 +13,12 @@ import UIKit
     let back: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
     let paper: SKSpriteNode = SKSpriteNode(imageNamed: "PaperNormal")
     
+    var gameState = GameState.menu
+    enum GameState {
+        case menu
+        case inGame
+    }
+    
     var objects: [GameObject] = []
     var MenuObjects: [SKNode] = []
     var score: Int = 0
