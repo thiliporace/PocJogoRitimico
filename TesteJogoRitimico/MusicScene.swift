@@ -15,8 +15,8 @@ class MusicScene: SKScene{
     enum PresentBallColor{
         case red
         case blue
-        case yellow
-        case green
+//        case yellow
+//        case green
     }
     
     enum DragStages{
@@ -31,10 +31,10 @@ class MusicScene: SKScene{
         case down
         case right
         case left
-        case diagonalUpRight
-        case diagonalUpLeft
-        case diagonalDownLeft
-        case diagonalDownRight
+//        case diagonalUpRight
+//        case diagonalUpLeft
+//        case diagonalDownLeft
+//        case diagonalDownRight
     }
     
     var gameData: GameData?
@@ -48,8 +48,8 @@ class MusicScene: SKScene{
     
     var redRectangle = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 200, height: 90))
     var blueRectangle = SKShapeNode(rect: CGRect(x: 200, y: 0, width: 200, height: 90))
-    var yellowRectangle = SKShapeNode(rect: CGRect(x: 0, y: 90, width: 200, height: 90))
-    var greenRectangle = SKShapeNode(rect: CGRect(x: 200, y: 90, width: 200, height: 90))
+//    var yellowRectangle = SKShapeNode(rect: CGRect(x: 0, y: 90, width: 200, height: 90))
+//    var greenRectangle = SKShapeNode(rect: CGRect(x: 200, y: 90, width: 200, height: 90))
     
     var ball = SKShapeNode(ellipseIn: CGRect(x: 30, y: 30, width: 50, height: 50))
     
@@ -145,16 +145,9 @@ class MusicScene: SKScene{
         blueRectangle.fillColor = .blue
         blueRectangle.zPosition = 1
         
-        yellowRectangle.fillColor = .yellow
-        yellowRectangle.zPosition = 1
-        
-        greenRectangle.fillColor = .green
-        greenRectangle.zPosition = 1
-        
         addChild(redRectangle)
         addChild(blueRectangle)
-        addChild(yellowRectangle)
-        addChild(greenRectangle)
+
     }
     
     func setBall(){
@@ -218,10 +211,7 @@ class MusicScene: SKScene{
                 checkPaper(color: .red)
             case .blue:
                 checkPaper(color: .blue)
-            case .yellow:
-                checkPaper(color: .yellow)
-            case .green:
-                checkPaper(color: .green)
+
             }
         }
         
@@ -241,10 +231,6 @@ class MusicScene: SKScene{
                     presentBallColor = .blue
                     checkPaper(color: .blue)
                 }
-                else if presentBallColor == .yellow {
-                    presentBallColor = .green
-                    checkPaper(color: .green)
-                }
                 dragType = .right
             }
             
@@ -257,103 +243,8 @@ class MusicScene: SKScene{
                     presentBallColor = .red
                     checkPaper(color: .red)
                 }
-                else if presentBallColor == .green {
-                    presentBallColor = .yellow
-                    checkPaper(color: .yellow)
-                }
+
                 dragType = .left
-            }
-            
-            //1 swipe, indo pra baixo
-            else if touch!.y <= point1.y - 20 && (touch!.x >= point1.x - 20 && touch!.x <= point1.x + 20) {
-                print("foi pra baixo, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .yellow {
-                    presentBallColor = .red
-                    checkPaper(color: .red)
-                }
-                else if presentBallColor == .green {
-                    presentBallColor = .blue
-                    checkPaper(color: .blue)
-                }
-                dragType = .down
-            }
-            
-            //1 swipe, indo pra cima
-            else if touch!.y >= point1.y + 20 && (touch!.x >= point1.x - 20 && touch!.x <= point1.x + 20) {
-                print("foi pra cima, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .red {
-                    presentBallColor = .yellow
-                    checkPaper(color: .yellow)
-                }
-                else if presentBallColor == .blue {
-                    presentBallColor = .green
-                    checkPaper(color: .green)
-                }
-                dragType = .up
-            }
-            
-            //1 swipe, indo pra diagonal direita baixo
-            
-            else if touch!.y <= point1.y - 15 && (touch!.x >= point1.x + 40) {
-                print("foi pra diagonal direita baixo, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .yellow {
-                    presentBallColor = .blue
-                    checkPaper(color: .blue)
-                }
-                dragType = .diagonalDownRight
-                
-            }
-            
-            
-            //1 swipe, indo pra diagonal direita cima
-            
-            else if touch!.y >= point1.y + 15 && (touch!.x >= point1.x + 40) {
-                print("foi pra diagonal direita cima, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .red {
-                    presentBallColor = .green
-                    checkPaper(color: .green)
-                }
-                
-                dragType = .diagonalUpRight
-                
-            }
-            
-            //1 swipe, indo pra diagonal esquerda cima
-            
-            else if touch!.y >= point1.y + 15 && (touch!.x <= point1.x - 40) {
-                print("foi pra diagonal direita cima, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .blue {
-                    presentBallColor = .yellow
-                    checkPaper(color: .yellow)
-                }
-                
-                dragType = .diagonalDownRight
-                
-            }
-            
-            //1 swipe, indo pra diagonal esuqerda baixo
-            
-            else if touch!.y <= point1.y - 15 && (touch!.x <= point1.x - 40) {
-                print("foi pra diagonal direita cima, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .green {
-                    presentBallColor = .red
-                    checkPaper(color: .red)
-                }
-                
-                dragType = .diagonalDownLeft
-                
             }
             
         }
@@ -368,12 +259,7 @@ class MusicScene: SKScene{
         case .blue:
             let action = SKAction.move(to: CGPoint(x: 230, y: 5), duration: 0.05)
             ball.run(action)
-        case .green:
-            let action = SKAction.move(to: CGPoint(x: 230, y: 95), duration: 0.05)
-            ball.run(action)
-        case .yellow:
-            let action = SKAction.move(to: CGPoint(x: 30, y: 95), duration: 0.05)
-            ball.run(action)
+
         }
         
         let sequenceShow = SKAction.sequence([actionHide, actionWait, actionShow])

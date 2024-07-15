@@ -18,8 +18,6 @@ class PaperFactory: GOFactory {
         switch chosenShapeNumber {
             case 0: chosenShape.fillColor = .red
             case 1: chosenShape.fillColor = .blue
-            case 2: chosenShape.fillColor = .yellow
-            case 3: chosenShape.fillColor = .green
             
             default: chosenShape.fillColor = .blue
         }
