@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F5A7D9E2C405FA6003E4D41 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A7D9D2C405FA6003E4D41 /* MenuScene.swift */; };
+		9F5A7DA02C405FEB003E4D41 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A7D9F2C405FEB003E4D41 /* MusicScene.swift */; };
 		E59F10612C2CF83400D34242 /* TesteJogoRitimicoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59F10602C2CF83400D34242 /* TesteJogoRitimicoApp.swift */; };
 		E59F10632C2CF83400D34242 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59F10622C2CF83400D34242 /* ContentView.swift */; };
 		E59F10652C2CF83600D34242 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E59F10642C2CF83600D34242 /* Assets.xcassets */; };
 		E59F10682C2CF83600D34242 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E59F10672C2CF83600D34242 /* Preview Assets.xcassets */; };
-		E59F106F2C2CF86700D34242 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59F106E2C2CF86700D34242 /* Scene.swift */; };
 		E59F10712C2D1F6800D34242 /* drums.wav in Resources */ = {isa = PBXBuildFile; fileRef = E59F10702C2D1F6800D34242 /* drums.wav */; };
 		E5D0A4B72C2F4C15008D3E11 /* GameScenePoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D0A4B62C2F4C15008D3E11 /* GameScenePoc.swift */; };
 		E5D0A4BB2C33AFA6008D3E11 /* GameObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D0A4BA2C33AFA6008D3E11 /* GameObject.swift */; };
@@ -23,12 +24,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9F5A7D9D2C405FA6003E4D41 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
+		9F5A7D9F2C405FEB003E4D41 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
 		E59F105D2C2CF83400D34242 /* TesteJogoRitimico.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TesteJogoRitimico.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E59F10602C2CF83400D34242 /* TesteJogoRitimicoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TesteJogoRitimicoApp.swift; sourceTree = "<group>"; };
 		E59F10622C2CF83400D34242 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E59F10642C2CF83600D34242 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E59F10672C2CF83600D34242 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		E59F106E2C2CF86700D34242 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		E59F10702C2D1F6800D34242 /* drums.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drums.wav; sourceTree = "<group>"; };
 		E5D0A4B62C2F4C15008D3E11 /* GameScenePoc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScenePoc.swift; sourceTree = "<group>"; };
 		E5D0A4BA2C33AFA6008D3E11 /* GameObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameObject.swift; sourceTree = "<group>"; };
@@ -71,8 +73,9 @@
 			children = (
 				E59F10602C2CF83400D34242 /* TesteJogoRitimicoApp.swift */,
 				E59F10622C2CF83400D34242 /* ContentView.swift */,
-				E59F106E2C2CF86700D34242 /* Scene.swift */,
 				E5D0A4B62C2F4C15008D3E11 /* GameScenePoc.swift */,
+				9F5A7D9D2C405FA6003E4D41 /* MenuScene.swift */,
+				9F5A7D9F2C405FEB003E4D41 /* MusicScene.swift */,
 				E5D0A4EB2C405B04008D3E11 /* Models */,
 				E5D0A4EA2C405AEE008D3E11 /* Factory */,
 				E5D0A4C22C33B9E9008D3E11 /* GameData.swift */,
@@ -184,8 +187,9 @@
 			files = (
 				E59F10632C2CF83400D34242 /* ContentView.swift in Sources */,
 				E59F10612C2CF83400D34242 /* TesteJogoRitimicoApp.swift in Sources */,
+				9F5A7DA02C405FEB003E4D41 /* MusicScene.swift in Sources */,
 				E5D0A4BD2C33B226008D3E11 /* Paper.swift in Sources */,
-				E59F106F2C2CF86700D34242 /* Scene.swift in Sources */,
+				9F5A7D9E2C405FA6003E4D41 /* MenuScene.swift in Sources */,
 				E5D0A4B72C2F4C15008D3E11 /* GameScenePoc.swift in Sources */,
 				E5D0A4C12C33B4F2008D3E11 /* PaperFactory.swift in Sources */,
 				E5D0A4BB2C33AFA6008D3E11 /* GameObject.swift in Sources */,
@@ -324,7 +328,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"TesteJogoRitimico/Preview Content\"";
-				DEVELOPMENT_TEAM = V6XLW7943W;
+				DEVELOPMENT_TEAM = 87P8BSACV6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -337,7 +341,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = br.carreirinha.TesteJogoRitimico;
+				PRODUCT_BUNDLE_IDENTIFIER = marina.ritmo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

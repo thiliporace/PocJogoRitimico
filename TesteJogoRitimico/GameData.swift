@@ -13,6 +13,12 @@ import UIKit
     let back: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
     let paper: SKSpriteNode = SKSpriteNode(imageNamed: "PaperNormal")
     
+    var gameState = GameState.menu
+    enum GameState {
+        case menu
+        case inGame
+    }
+    
     var objects: [GameObject] = []
     var MenuObjects: [SKNode] = []
     var score: Int = 0
@@ -21,7 +27,7 @@ import UIKit
     }
    
     func create(factory: GOFactory){
-        let object: GameObject = factory.createGameObject(position: CGPoint(x: -paper.size.width, y: UIScreen.main.bounds.height/2) )
+        let object: GameObject = factory.createGameObject(position: CGPoint(x: 0/*-paper.size.width*/, y: UIScreen.main.bounds.height/2) )
         objects.append(object)
         
     }

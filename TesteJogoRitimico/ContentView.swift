@@ -9,8 +9,8 @@ import SwiftUI
 import SpriteKit
 
 struct ContentView: View {
-    var scene: GameScenePoc{
-        let scene = GameScenePoc()
+    var scene: MenuScene{
+        let scene = MenuScene()
         scene.gameData = GameData()
         scene.scaleMode = .resizeFill
         return scene
