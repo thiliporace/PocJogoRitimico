@@ -10,7 +10,7 @@ import SpriteKit
 
 protocol GameObject{
     var position: CGPoint { get set }
-    var node: SKSpriteNode { get set }
+    var node: SKShapeNode { get set }
 
     func update()
     
