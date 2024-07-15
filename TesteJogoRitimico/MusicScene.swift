@@ -65,7 +65,6 @@ class MusicScene: SKScene{
         
         playSound("Metronomo","wav")
         //MARK: Musica inicia
-        
         player?.pause()
         player?.prepareToPlay()
         
@@ -84,7 +83,7 @@ class MusicScene: SKScene{
     }
     
     func setHands(){
-        stampUp.position = CGPoint(x: background.position.x + 200, y: background.position.y)
+        stampUp.position = CGPoint(x: background.position.x + 150, y: background.position.y)
         stampUp.zPosition = 1
         
         addChild(stampUp)
@@ -145,7 +144,7 @@ class MusicScene: SKScene{
         if let objects = gameData?.objects {
             
             if let paper = objects.last as? Paper{
-                if paper.node.position.x >= 400 && paper.node.position.x <= 500{
+                if paper.node.position.x >= 275  && paper.node.position.x <= 575{
                     
                     paper.touched = true
                     
