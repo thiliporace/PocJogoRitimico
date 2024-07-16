@@ -365,7 +365,7 @@ class MusicScene: SKScene{
         if !renderPaper{
             Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
                 
-                if objectCount >= 0{
+                if objectCount >= 0 && (measure == 1 || measure == 2 || measure == 3 || measure == 4) {
                     measure += 1
                     
                     objectCount -= 1
