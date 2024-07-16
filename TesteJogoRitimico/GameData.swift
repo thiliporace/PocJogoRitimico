@@ -34,6 +34,10 @@ import UIKit
         if delay <= notesStartDelay{
             let object: GameObject = factory.createEmptyGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
             objects.append(object)
+            
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(notesStartDelay), repeats: false) { timer in
+                self.objects.removeAll()
+            }
         }
         else {
             let object: GameObject = factory.createGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )

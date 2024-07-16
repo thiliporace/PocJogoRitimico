@@ -137,7 +137,7 @@ class MusicScene: SKScene{
     }
     
     func setHands(){
-        stampUp.position = CGPoint(x: 400, y: 400)
+        stampUp.position = CGPoint(x: 360, y: 480)
         stampUp.zPosition = 1
         
         addChild(stampUp)
@@ -284,7 +284,7 @@ class MusicScene: SKScene{
         if let objects = gameData?.objects {
             
             if let paper = objects.last as? Paper{
-                if paper.node.position.y <= 600 && paper.node.position.y >= 200 && paper.color == color{
+                if paper.node.position.y <= 600 && paper.node.position.y >= -200 && paper.color == color{
                     
                     paper.touched = true
                     
@@ -327,7 +327,6 @@ class MusicScene: SKScene{
                     self.gameData?.gameState = .menu
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
                         resetGame()
-                        
                     })
                 }
                 setTimer()
@@ -363,6 +362,17 @@ class MusicScene: SKScene{
     
     func setTimer(){
         if !renderPaper{
+            
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
+                let maxValue = 3
+                let chosenShapeNumber = arc4random_uniform(UInt32(maxValue))
+                
+                if chosenShapeNumber == 1 && objectCount >= 0 {
+                    gameData?.create(factory: PaperFactory(), delay: self.seconds)
+                    self.renderLast()
+                }
+            }
+            
             Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
                 
                 if objectCount >= 0 && (measure == 1 || measure == 2 || measure == 3 || measure == 4) {
