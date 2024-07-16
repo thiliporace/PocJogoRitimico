@@ -173,7 +173,6 @@ class MusicScene: SKScene{
         
         time = Float(player!.currentTime + 0.5)
         
-        // MARK: falta math
         if floor((time.truncatingRemainder(dividingBy: 2))) == 0 && renderPaper && objectCount != 0 {
             
             objectCount -= 1

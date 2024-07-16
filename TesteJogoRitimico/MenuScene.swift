@@ -15,6 +15,7 @@ class MenuScene: SKScene{
     var gameData: GameData?
     
     let game = MusicScene(size: UIScreen.main.bounds.size)
+    let twoLaneScene = Music2Scene(size: UIScreen.main.bounds.size)
     
     override func didMove(to view: SKView) {
         setMenu()
@@ -25,10 +26,14 @@ class MenuScene: SKScene{
             
             //testar se reseta o menu ou não
             //removeAllChildren()
-            
             game.gameData = gameData
             game.scaleMode = .aspectFill
             self.view?.presentScene(game)
+            
+        }else if gameData?.gameState == .twoLane{
+            twoLaneScene.gameData = gameData
+            twoLaneScene.scaleMode = .aspectFill
+            self.view?.presentScene(twoLaneScene)
         }
     }
     
@@ -76,16 +81,16 @@ class MenuScene: SKScene{
         let touch = touches.first?.location(in: self)
         
         if let objects = gameData?.MenuObjects {
-            for (index, object) in objects.enumerated() {
+            for object in objects {
                 
-                if let button = object as? SKNode {
+                if let button = object as SKNode? {
                     
                     if button.contains(touch!) {
                         if button.name == "play" {
                             //startGame()
                             gameData?.gameState = .inGame
                         } else if button.name == "lane" {
-                            gameData?.gameState = .inGame
+                            gameData?.gameState = .twoLane
                         }
                     }
                 }
