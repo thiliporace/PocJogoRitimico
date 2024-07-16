@@ -23,9 +23,10 @@ class Note: NoteObject{
         node.position = position
         
         let action = SKAction.moveTo(x: UIScreen.main.bounds.width/2, duration: travelTime)
-        let remove = SKAction.removeFromParent()
-        let sequence = SKAction.sequence([action,remove])
-        node.run(sequence)
+        //let remove = SKAction.removeFromParent()
+        //let sequence = SKAction.sequence([action,remove])
+    
+        node.run(action)
     }
     
     

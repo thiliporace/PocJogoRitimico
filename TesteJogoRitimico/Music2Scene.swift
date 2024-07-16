@@ -17,6 +17,8 @@ class Music2Scene: SKScene{
     var pinkButton: SKSpriteNode = SKSpriteNode(imageNamed: "pinkButton")
     var blueButton: SKSpriteNode = SKSpriteNode(imageNamed: "blueButton")
     var goodArea: SKShapeNode = SKShapeNode()
+    var finalArea: SKShapeNode = SKShapeNode()
+    var feedbackLabel: SKLabelNode = SKLabelNode(text: "")
     
     var player: AVAudioPlayer?
     var play: Bool = false
@@ -30,12 +32,8 @@ class Music2Scene: SKScene{
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
-            
-            /* The following line is required for the player to work on iOS 11. Change the file type accordingly*/
+
             player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
-            
-            /* iOS 10 and earlier require the following line:
-             player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3) */
             
             guard let player = player else { return }
             
@@ -56,6 +54,8 @@ class Music2Scene: SKScene{
         setBackground()
         setButtons()
         setGoodArea()
+        setFinalArea()
+        setLabel()
         
         playSound("twoLane","wav")
         player?.pause()
@@ -93,6 +93,25 @@ class Music2Scene: SKScene{
         goodArea.zPosition = 1
     }
     
+    func setFinalArea(){
+        let rectangle = SKShapeNode(rectOf: CGSize(width: 1, height: 90))
+        rectangle.fillColor = .clear
+        rectangle.strokeColor = .clear
+        rectangle.position = CGPoint(x: UIScreen.main.bounds.width/2, y: 45)
+        finalArea = rectangle
+        addChild(finalArea)
+        finalArea.zPosition = 1
+    }
+    
+    func setLabel(){
+        feedbackLabel.position = CGPoint(x: 350, y: 100)
+        feedbackLabel.zPosition = 10
+        feedbackLabel.isUserInteractionEnabled = false
+        feedbackLabel.fontColor = .black
+        feedbackLabel.fontSize = 30
+        addChild(feedbackLabel)
+    }
+    
     // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
@@ -108,15 +127,7 @@ class Music2Scene: SKScene{
             beatNote()
         }
         
-//        
-//        if  !player!.isPlaying{
-//            gameData?.gameState = .menu
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
-//                resetGame()
-//                
-//            })
-//        }
-//
+        checkFinalAreaCollision()
     }
     
     // MARK: Touch began
@@ -124,20 +135,8 @@ class Music2Scene: SKScene{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first?.location(in: self)
         
-        if let objects = gameData?.music2Buttons {
-            for object in objects {
-                
-                if let button = object as SKShapeNode? {
-                    if button.contains(touch!) {
-                        if button.fillColor == .gamePink {
-                            print("toquei")
-                            //func pink
-                        } else if button.fillColor == .blue {
-                            //func blue
-                        }
-                    }
-                }
-            }
+        if pinkButton.frame.contains(touch!) {
+            locationNote()
         }
     }
     
@@ -148,20 +147,61 @@ class Music2Scene: SKScene{
                 
                 isRendering = true
                 gameData?.createNFactory(factory: NoteFactory(), type: .pinkType)
-                print("mandei renderizar")
                 renderNote()
             }
         else if floor(time.truncatingRemainder(dividingBy: 1.5)) != 0 && isRendering{
-                print("parei de renderizar")
                 isRendering = false
             }
     }
     
     func renderNote(){
-        print(gameData?.notes.count)
         if let notes = gameData?.notes {
-            print("rederizei")
             addChild(notes.last!.node)
+        }
+    }
+    
+    func destroyNote(){
+        if (gameData?.notes) != nil {
+            gameData?.notes.first?.node.removeFromParent()
+            gameData?.notes.removeFirst()
+        }
+    }
+    
+    func labelAnimation(){
+        let action0 = SKAction.fadeIn(withDuration: 0)
+        let action = SKAction.moveTo(y: 120, duration: 0.5)
+        let action2 = SKAction.fadeOut(withDuration: 0.1)
+        let action3 = SKAction.moveTo(y: 100, duration: 0)
+        let sequence = SKAction.sequence([action0,action, action2, action3])
+        feedbackLabel.run(sequence)
+    }
+    
+    func locationNote(){
+        if let notes = gameData?.notes{
+            if let note = notes.first as? Note{
+                if goodArea.frame.contains(note.node.position){
+                    destroyNote()
+                    feedbackLabel.text = "Good!"
+                   
+                }
+                else{
+                    destroyNote()
+                    feedbackLabel.text = "missed..."
+                }
+                labelAnimation()
+            }
+        }
+    }
+    
+    func checkFinalAreaCollision(){
+        if let notes = gameData?.notes{
+            if let note = notes.first as? Note{
+                if finalArea.frame.contains(note.node.position){
+                    destroyNote()
+                    feedbackLabel.text = "missed..."
+                    labelAnimation()
+                }
+            }
         }
     }
 }

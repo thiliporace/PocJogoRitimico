@@ -41,10 +41,9 @@ import UIKit
         createNFactory(factory: NoteFactory(), type: type)
     }
     func createNFactory(factory: NFactory, type: colorType){
-        print("nota: ")
         
         let note: NoteObject = factory.createNoteObject(position: CGPoint(x: type == .pinkType ? 100 : UIScreen.main.bounds.width-100 , y: 50), type: type, travelTime: 1)
-        print(note)
+        //print(note)
         notes.append(note)
     }
 }
