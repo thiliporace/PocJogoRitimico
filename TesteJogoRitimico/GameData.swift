@@ -13,6 +13,8 @@ import UIKit
     let back: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
     let paper: SKSpriteNode = SKSpriteNode(imageNamed: "PaperNormal")
     
+    let notesStartDelay: Int = 2
+    
     var gameState = GameState.menu
     enum GameState {
         case menu
@@ -22,13 +24,21 @@ import UIKit
     var objects: [GameObject] = []
     var MenuObjects: [SKNode] = []
     var score: Int = 0
+    
     func createPaper(){
-         create(factory: PaperFactory())
+         create(factory: PaperFactory(), seconds: 2)
     }
    
-    func create(factory: GOFactory){
-        let object: GameObject = factory.createGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
-        objects.append(object)
+    func create(factory: GOFactory, seconds: Int){
+        
+        if seconds <= notesStartDelay{
+            let object: GameObject = factory.createEmptyGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
+            objects.append(object)
+        }
+        else {
+            let object: GameObject = factory.createGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
+            objects.append(object)
+        }
         
     }
 }

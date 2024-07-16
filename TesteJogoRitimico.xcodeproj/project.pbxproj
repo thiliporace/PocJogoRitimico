@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F0003392C46E2F700E52F35 /* Music1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F0003382C46E2F700E52F35 /* Music1.wav */; };
 		8FD3DA672C45A60A005C7348 /* PaperColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD3DA662C45A60A005C7348 /* PaperColor.swift */; };
 		9F5A7D9E2C405FA6003E4D41 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A7D9D2C405FA6003E4D41 /* MenuScene.swift */; };
 		9F5A7DA02C405FEB003E4D41 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A7D9F2C405FEB003E4D41 /* MusicScene.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F0003382C46E2F700E52F35 /* Music1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Music1.wav; sourceTree = "<group>"; };
 		8FD3DA662C45A60A005C7348 /* PaperColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperColor.swift; sourceTree = "<group>"; };
 		9F5A7D9D2C405FA6003E4D41 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
 		9F5A7D9F2C405FEB003E4D41 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				E5D0A4EB2C405B04008D3E11 /* Models */,
 				E5D0A4EA2C405AEE008D3E11 /* Factory */,
 				E5D0A4C22C33B9E9008D3E11 /* GameData.swift */,
+				8F0003382C46E2F700E52F35 /* Music1.wav */,
 				E5D0A4CA2C33C36C008D3E11 /* Metronomo.wav */,
 				E59F10702C2D1F6800D34242 /* drums.wav */,
 				E59F10642C2CF83600D34242 /* Assets.xcassets */,
@@ -182,6 +185,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F0003392C46E2F700E52F35 /* Music1.wav in Resources */,
 				E59F10682C2CF83600D34242 /* Preview Assets.xcassets in Resources */,
 				E59F10712C2D1F6800D34242 /* drums.wav in Resources */,
 				E5D0A4CB2C33C36C008D3E11 /* Metronomo.wav in Resources */,

@@ -10,5 +10,5 @@ import Foundation
 enum PaperColor: String, CaseIterable{
     case red
     case blue
-
+    case empty
 }

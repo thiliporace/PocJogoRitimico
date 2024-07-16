@@ -9,4 +9,6 @@ import Foundation
 
 protocol GOFactory{
     func createGameObject(position: CGPoint) -> GameObject
+    
+    func createEmptyGameObject(position: CGPoint) -> GameObject
 }

@@ -86,6 +86,13 @@ class MusicScene: SKScene{
     
     var point1: CGPoint = CGPoint(x: 0, y: 0)
     
+    var renderTime: TimeInterval = 0
+    var changeTime: TimeInterval = 1
+    var seconds:Int = 0
+    var minutes:Int = 0
+    
+    let musicStartDelay: Int = 1
+    
 //    let initialTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { timer in
 //        let musicTimer = Timer.scheduledTimer(timeInterval: 2.5, repeats: true)/*, target: self, selector: #selector(fazPapel()), userInfo: nil*/
 //    }
@@ -105,13 +112,15 @@ class MusicScene: SKScene{
         setRectangles()
         setBall()
         
-        playSound("Metronomo","wav")
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay), repeats: false) { timer in
+            self.playSound("Music1","wav")
+            self.createPaper()
+        }
+        
         //MARK: Musica inicia
         
         player?.pause()
         player?.prepareToPlay()
-        
-        createPaper()
         
         setScore()
     }
@@ -181,8 +190,7 @@ class MusicScene: SKScene{
     }
     
     func createPaper(){
-//        objectCount = Int(player!.duration)/2
-        objectCount = 50
+        objectCount = Int(player!.duration)/2
     }
     
     func setScore(){
@@ -211,7 +219,6 @@ class MusicScene: SKScene{
                 checkPaper(color: .red)
             case .blue:
                 checkPaper(color: .blue)
-
             }
         }
         
@@ -260,6 +267,8 @@ class MusicScene: SKScene{
             let action = SKAction.move(to: CGPoint(x: 230, y: 5), duration: 0.05)
             ball.run(action)
 
+        case .empty:
+            print("")
         }
         
         let sequenceShow = SKAction.sequence([actionHide, actionWait, actionShow])
@@ -288,14 +297,19 @@ class MusicScene: SKScene{
                     scoreLabel.text = "Score: \(scorePoints)"
                 }
                 else{
-                    scorePoints -= 20
-                    scoreLabel.text = "Score: \(scorePoints)"
+                    if paper.color != .empty{
+                        scorePoints -= 20
+                        scoreLabel.text = "Score: \(scorePoints)"
+                    }
+                    
                 }
             }
         }
     }
     
     override func update(_ currentTime: TimeInterval) {
+        
+        calculateTime(currentTime: currentTime)
         
         if !play{
             play = true
@@ -304,13 +318,26 @@ class MusicScene: SKScene{
             //MARK: Inicia player
         }
         
-        time = Float(player!.currentTime + 0.5)
+        if seconds > musicStartDelay {
+            time = Float(player!.currentTime + 0.65)
+            
+            if  !player!.isPlaying{
+                Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay), repeats: false) { timer in
+                    self.gameData?.gameState = .menu
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
+                        resetGame()
+                        
+                    })
+                }
+                
+            }
+        }
         
         // MARK: falta math
         if floor((time.truncatingRemainder(dividingBy: 2))) == 0 && renderPaper && objectCount != 0 {
             
             objectCount -= 1
-            gameData?.create(factory: PaperFactory())
+            gameData?.create(factory: PaperFactory(), seconds: seconds)
             renderLast()
             renderPaper = false
             
@@ -319,20 +346,26 @@ class MusicScene: SKScene{
             renderPaper = true
         }
         
-        if  !player!.isPlaying{
-            gameData?.gameState = .menu
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
-                resetGame()
-                
-            })
-        }
-        
         if let objects = gameData?.objects {
             for (index, object) in objects.enumerated() {
                 if let paper = object as? Paper {
                     paper.update()
                 }
             }
+        }
+    }
+    
+    func calculateTime(currentTime: TimeInterval){
+        if currentTime > renderTime{
+            if renderTime > 0{
+                seconds += 1
+                if seconds == 60{
+                    seconds = 0
+                    minutes += 1
+                }
+                
+            }
+            renderTime = currentTime + changeTime
         }
     }
     
