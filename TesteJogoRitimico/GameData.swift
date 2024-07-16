@@ -26,12 +26,12 @@ import UIKit
     var score: Int = 0
     
     func createPaper(){
-         create(factory: PaperFactory(), seconds: 2)
+         create(factory: PaperFactory(), delay: 2)
     }
    
-    func create(factory: GOFactory, seconds: Int){
+    func create(factory: GOFactory, delay: Int){
         
-        if seconds <= notesStartDelay{
+        if delay <= notesStartDelay{
             let object: GameObject = factory.createEmptyGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
             objects.append(object)
         }

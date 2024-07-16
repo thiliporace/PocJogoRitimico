@@ -62,7 +62,9 @@ class MusicScene: SKScene{
     let actionWait: SKAction = SKAction.wait(forDuration: 0.2)
     let remove: SKAction = SKAction.removeFromParent()
     
-    var bpm: Int = 120
+    var bpm: Float = 120
+    var secondsPerBeat: Float = 0
+    var measure: Int = 1
     //0,5 player clock vem papel
     //0,5 pra ele chegar
     //primeiro 1,5   - 2
@@ -74,7 +76,7 @@ class MusicScene: SKScene{
     
     var player: AVAudioPlayer?
     var play: Bool = false
-    var renderPaper = true
+    var renderPaper = false
     var objectCount = 0
     var scorePoints = 0
     
@@ -98,6 +100,7 @@ class MusicScene: SKScene{
 //    }
     
     override func didMove(to view: SKView) {
+        secondsPerBeat = 60 / bpm
         startGame()
     }
     
@@ -190,7 +193,7 @@ class MusicScene: SKScene{
     }
     
     func createPaper(){
-        objectCount = Int(player!.duration)/2
+        objectCount = Int(player!.duration)
     }
     
     func setScore(){
@@ -314,37 +317,26 @@ class MusicScene: SKScene{
         if !play{
             play = true
             player?.play()
-                        
             //MARK: Inicia player
         }
         
         if seconds > musicStartDelay {
-            time = Float(player!.currentTime + 0.65)
             
-            if  !player!.isPlaying{
-                Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay), repeats: false) { timer in
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + 0.5, repeats: false) { [self] timer in
+                if  !player!.isPlaying{
                     self.gameData?.gameState = .menu
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
                         resetGame()
                         
                     })
                 }
-                
+                setTimer()
             }
+            
         }
         
-        // MARK: falta math
-        if floor((time.truncatingRemainder(dividingBy: 2))) == 0 && renderPaper && objectCount != 0 {
-            
-            objectCount -= 1
-            gameData?.create(factory: PaperFactory(), seconds: seconds)
-            renderLast()
-            renderPaper = false
-            
-        }
-        else if floor(time.truncatingRemainder(dividingBy: 2)) == 1{
-            renderPaper = true
-        }
+        
+        
         
         if let objects = gameData?.objects {
             for (index, object) in objects.enumerated() {
@@ -367,6 +359,29 @@ class MusicScene: SKScene{
             }
             renderTime = currentTime + changeTime
         }
+    }
+    
+    func setTimer(){
+        if !renderPaper{
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
+                
+                if objectCount >= 0{
+                    measure += 1
+                    
+                    objectCount -= 1
+                    gameData?.create(factory: PaperFactory(), delay: self.seconds)
+                    self.renderLast()
+                    
+                    if self.measure >= 4{
+                        self.measure = 1
+                    }
+                }
+                
+                
+            }
+            renderPaper = true
+        }
+        
     }
     
     func renderLast(){
