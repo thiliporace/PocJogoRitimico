@@ -62,7 +62,7 @@ class MusicScene: SKScene{
     
     var bpm: Float = 120
     var secondsPerBeat: Float = 0
-    var measure: Int = 1
+    var measure: Float = 1
     //0,5 player clock vem papel
     //0,5 pra ele chegar
     //primeiro 1,5   - 2
@@ -77,6 +77,7 @@ class MusicScene: SKScene{
     var renderPaper = false
     var objectCount = 0
     var scorePoints = 0
+    var comboPoints = 0
     
     var time: Float = 0
     
@@ -93,6 +94,7 @@ class MusicScene: SKScene{
     
     let musicStartDelay: Int = 1
     
+    var songBeats: Float = 1
 //    let initialTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { timer in
 //        let musicTimer = Timer.scheduledTimer(timeInterval: 2.5, repeats: true)/*, target: self, selector: #selector(fazPapel()), userInfo: nil*/
 //    }
@@ -263,7 +265,11 @@ class MusicScene: SKScene{
         if seconds > musicStartDelay {
             
             Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { [self] timer in
-                setTimer()
+                
+                
+                setInitialTimer()
+                
+                
                 if  !player!.isPlaying{
                     self.gameData?.gameState = .menu
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
@@ -330,40 +336,57 @@ class MusicScene: SKScene{
         }
     }
     
-    func setTimer(){
-        if !renderPaper{
-            
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
-                let maxValue = 5
-                let chosenShapeNumber = arc4random_uniform(UInt32(maxValue))
+    func setInitialTimer(){
+        var initialTimer: Timer?
+        
+        if !renderPaper {
+            initialTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
+                songBeats += 0.5
+                measure += 0.5
                 
-                if chosenShapeNumber == 1 && objectCount >= 0 {
-                    gameData?.create(factory: PaperFactory(), delay: self.seconds)
-                    self.renderLast()
-                }
-            }
-            
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
-                
-                if objectCount >= 0 && (measure == 1 || measure == 2 || measure == 3 || measure == 4) {
-//                    print("beat \(measure)")
-                    measure += 1
-                    
-                    objectCount -= 1
-                    gameData?.create(factory: PaperFactory(), delay: self.seconds)
-                    self.renderLast()
-                    
-                    if self.measure >= 5 {
-                        self.measure = 1
-                    }
+                if self.measure >= 5 {
+                    self.measure = 1
                 }
                 
+                switch measure{
+                case 2:
+                    spawnNote()
+                case 4:
+                    spawnNote()
+                default:
+                    break
+                }
+                
+                switch songBeats{
+                case 4.5:
+                    spawnNote()
+                case 9.5:
+                    spawnNote()
+                case 8.5:
+                    spawnNote()
+                case 13.5:
+                    spawnNote()
+                default:
+                    break
+                }
                 
             }
-            renderPaper = true
+        }
+        renderPaper = true
+    }
+    
+    func spawnNote(){
+        if objectCount >= 0{
+            
+            objectCount -= 1
+            gameData?.create(factory: PaperFactory(), delay: self.seconds)
+            self.renderLast()
+            
         }
         
     }
+    
+    
     
     func renderLast(){
         if let objects = gameData?.objects {
