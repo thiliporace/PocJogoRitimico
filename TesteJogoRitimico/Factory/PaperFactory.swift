@@ -22,7 +22,7 @@ class PaperFactory: GOFactory {
             default: chosenShape.fillColor = .blue
         }
         
-        print("spawnou: \(PaperColor.allCases[Int(chosenShapeNumber)])")
+//        print("spawnou: \(PaperColor.allCases[Int(chosenShapeNumber)])")
         
         let paper: Paper = Paper(position: position, color: PaperColor.allCases[Int(chosenShapeNumber)], node: chosenShape)
         

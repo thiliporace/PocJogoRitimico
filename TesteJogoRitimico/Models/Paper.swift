@@ -12,6 +12,8 @@ class Paper: GameObject{
     var position: CGPoint
     var node: SKShapeNode
     var touched: Bool = false
+    var state: Int = 0
+    var isOnArea: Bool = false
     var remove: Bool = false
     var color: PaperColor
     
@@ -24,20 +26,42 @@ class Paper: GameObject{
         node.zPosition = 0
         node.position = position
         let action = SKAction.moveTo(y: 0, duration: 1.2)
-        let custom = SKAction.customAction(withDuration: 0.7, actionBlock: { [self] _,_ in
-            self.remove = true
-        })
+//        let custom = SKAction.customAction(withDuration: 0.6, actionBlock: { [self] _,_ in
+//            self.remove = true
+//        })
         let remove = SKAction.removeFromParent()
-        let sequence = SKAction.sequence([action,custom,remove])
+        let sequence = SKAction.sequence([action,remove])
         node.run(sequence)
     }
     
     
     func update() {
         
+        switch state {
+        case 0:
+            //ta fora da area
+            isOnArea = false
+            break
+        case 1:
+            //ta dentro da area
+            isOnArea = true
+            
+        case 2:
+            //saiu da area
+            isOnArea = false
+            remove = true
+            node.removeFromParent()
+            
+            
+        default:
+            break
+        }
         
-        if touched{
-            node.fillColor = .gray
+        if isOnArea{
+            if touched{
+                node.fillColor = .gray
+                
+            }
         }
     }
     

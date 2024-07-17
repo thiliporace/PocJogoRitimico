@@ -46,13 +46,11 @@ class MusicScene: SKScene{
     var stampDown: SKSpriteNode = SKSpriteNode(imageNamed: "StampDown")
     var stampUp: SKSpriteNode = SKSpriteNode(imageNamed: "StampUp")
     
-    var redRectangle = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 200, height: 90))
-    var blueRectangle = SKShapeNode(rect: CGRect(x: 200, y: 0, width: 200, height: 90))
+    var redRectangle = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 200, height: 140))
+    var blueRectangle = SKShapeNode(rect: CGRect(x: 200, y: 0, width: 200, height: 140))
 //    var yellowRectangle = SKShapeNode(rect: CGRect(x: 0, y: 90, width: 200, height: 90))
 //    var greenRectangle = SKShapeNode(rect: CGRect(x: 200, y: 90, width: 200, height: 90))
-    
-    var ball = SKShapeNode(ellipseIn: CGRect(x: 30, y: 30, width: 50, height: 50))
-    
+        
     var scoreLabel: SKLabelNode = SKLabelNode(text: "Score: ")
     
     var touched:Bool = false
@@ -60,7 +58,7 @@ class MusicScene: SKScene{
     let actionHide: SKAction = SKAction.hide()
     let actionShow: SKAction = SKAction.unhide()
     let actionWait: SKAction = SKAction.wait(forDuration: 0.2)
-    let remove: SKAction = SKAction.removeFromParent()
+
     
     var bpm: Float = 120
     var secondsPerBeat: Float = 0
@@ -99,6 +97,8 @@ class MusicScene: SKScene{
 //        let musicTimer = Timer.scheduledTimer(timeInterval: 2.5, repeats: true)/*, target: self, selector: #selector(fazPapel()), userInfo: nil*/
 //    }
     
+    var checkArea : SKShapeNode = SKShapeNode(rectOf: CGSize(width: UIScreen.main.bounds.width, height: 120))
+    
     override func didMove(to view: SKView) {
         secondsPerBeat = 60 / bpm
         startGame()
@@ -109,13 +109,17 @@ class MusicScene: SKScene{
     func startGame(){
         //removeAllChildren()
         //gameState = .inGame
-        
+        checkArea.position = CGPoint(x: UIScreen.main.bounds.width/2, y: UIScreen.main.bounds.height/2)
+        checkArea.fillColor = .clear
+        checkArea.strokeColor = .black
+        checkArea.lineWidth = 4
+        checkArea.zPosition = 100
+        addChild(checkArea)
         setBackground()
-        setHands()
+//        setHands()
         setRectangles()
-        setBall()
         
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + 0.5, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { timer in
             self.playSound("Music1","wav")
             self.createPaper()
         }
@@ -136,19 +140,19 @@ class MusicScene: SKScene{
         
     }
     
-    func setHands(){
-        stampUp.position = CGPoint(x: 360, y: 480)
-        stampUp.zPosition = 1
-        
-        addChild(stampUp)
-        
-        stampDown.position = stampUp.position
-        stampDown.position.y = stampUp.position.y
-        stampDown.zPosition = stampUp.zPosition
-        stampDown.isHidden = true
-        addChild(stampDown)
-        
-    }
+//    func setHands(){
+//        stampUp.position = CGPoint(x: 360, y: 480)
+//        stampUp.zPosition = 1
+//        
+//        addChild(stampUp)
+//        
+//        stampDown.position = stampUp.position
+//        stampDown.position.y = stampUp.position.y
+//        stampDown.zPosition = stampUp.zPosition
+//        stampDown.isHidden = true
+//        addChild(stampDown)
+//        
+//    }
     
     func setRectangles(){
         redRectangle.fillColor = .red
@@ -160,14 +164,6 @@ class MusicScene: SKScene{
         addChild(redRectangle)
         addChild(blueRectangle)
 
-    }
-    
-    func setBall(){
-        ball.fillColor = .gray
-        ball.zPosition = 2
-        ball.name = "ball"
-        
-        addChild(ball)
     }
     
     func playSound(_ nome: String, _ ext: String) {
@@ -209,70 +205,16 @@ class MusicScene: SKScene{
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first?.location(in: self)
-        self.point1 = touch!
         
-        dragStage = .firstDrag
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if dragStage == .firstDrag {
-            switch presentBallColor {
-            case .red:
-                checkPaper(color: .red)
-            case .blue:
-                checkPaper(color: .blue)
-            }
+        if blueRectangle.frame.contains(touch!) {
+            checkPaper(color: .blue)
         }
-        
-        dragStage = .inactive
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first?.location(in: self)
-        
-        if dragStage == .firstDrag {
-            
-            //1 swipe, indo pra direita
-            if touch!.x >= point1.x + 20 && (touch!.y >= point1.y - 20 && touch!.y <= point1.y + 20) {
-                print("foi pra direita, 1 swipe")
-                dragStage = .secondDrag
-                if presentBallColor == .red {
-                    presentBallColor = .blue
-                    checkPaper(color: .blue)
-                }
-                dragType = .right
-            }
-            
-            //1 swipe, indo pra esquerda
-            else if touch!.x <= point1.x - 20 && (touch!.y >= point1.y - 20 && touch!.y <= point1.y + 20) {
-                print("foi pra esquerda, 1 swipe")
-                dragStage = .secondDrag
-                
-                if presentBallColor == .blue {
-                    presentBallColor = .red
-                    checkPaper(color: .red)
-                }
-                
-                dragType = .left
-            }
-            
+        else if redRectangle.frame.contains(touch!) {
+            checkPaper(color: .red)
         }
     }
     
     func checkPaper(color: PaperColor){
-        
-        switch color {
-        case .red:
-            let action = SKAction.move(to: CGPoint(x: 30, y: 5), duration: 0.05)
-            ball.run(action)
-        case .blue:
-            let action = SKAction.move(to: CGPoint(x: 230, y: 5), duration: 0.05)
-            ball.run(action)
-
-        case .empty:
-            print("")
-        }
         
         let sequenceShow = SKAction.sequence([actionHide, actionWait, actionShow])
         //mostrar depois esconder a mão
@@ -280,35 +222,30 @@ class MusicScene: SKScene{
         
         stampUp.run(sequenceShow)
         stampDown.run(sequenceHide)
-        
+//        print("clicou: \(color)")
         if let objects = gameData?.objects {
             
             if let paper = objects.first as? Paper {
                 
-                if paper.node.position.y >= 10 && paper.node.position.y <= 800 && paper.color == color{
+                if paper.state == 1 && paper.color == color{
                     
                     paper.touched = true
-                    
+                    print("ACERTOU")
                     let generator = UIImpactFeedbackGenerator(style: .soft)
                     generator.prepare()
                     let animation: SKAction = SKAction.customAction(withDuration: 0, actionBlock: { [self] _,_ in
                         if !(gameData?.objects.isEmpty)!{
+                            
                             gameData?.objects.removeFirst()
                         }
                     })
-                    let sequence = SKAction.sequence([actionWait, animation])
+                    let sequence = SKAction.sequence([animation])
                     paper.node.run(sequence)
                     generator.impactOccurred()
                     scorePoints += 10
                     scoreLabel.text = "Score: \(scorePoints)"
                 }
-//                else{
-//                    if paper.color != .empty{
-//                        scorePoints -= 20
-//                        scoreLabel.text = "Score: \(scorePoints)"
-//                    }
-//                    
-//                }
+              
             }
         }
     }
@@ -325,7 +262,7 @@ class MusicScene: SKScene{
         
         if seconds > musicStartDelay {
             
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + 0.5, repeats: false) { [self] timer in
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { [self] timer in
                 setTimer()
                 if  !player!.isPlaying{
                     self.gameData?.gameState = .menu
@@ -339,21 +276,43 @@ class MusicScene: SKScene{
         }
         
         if let objects = gameData?.objects {
-            for (index, object) in objects.enumerated() {
-                if let paper = object as? Paper {
-                    paper.update()
-                    if paper.remove{
-                        gameData?.objects.removeFirst()
+            if let paper = objects.first as? Paper{
+                paper.update()
+                if checkArea.frame.contains(paper.node.position){
+                    paper.state = 1
+                }else{
+                    if paper.isOnArea{
+                        paper.touched = false
+                        paper.state = 2
                     }
+                }
+                if paper.remove && !(gameData?.objects.isEmpty)!{
+                    gameData?.objects.removeFirst()
                 }
             }
         }
         
-        if let objects = gameData?.objects.first {
-            
-            print(objects.node.position.y)
-        }
+//        if let objects = gameData?.objects {
+//            for object in objects {
+//                if let paper = object as? Paper {
+//                    paper.update()
+//                    if paper.remove{
+//                        gameData?.objects.removeFirst()
+//                    }
+//                    if checkArea.frame.contains(paper.node.position){
+//                        paper.state = 1
+//                    }else{
+//                        if paper.isOnArea{
+//                            paper.state = 2
+//                        }
+//                    }
+//                }
+//            }
+//        }
         
+//        if let objects = gameData?.objects.first {
+//            print(objects.node.position.y)
+//        }
         
     }
     
@@ -387,7 +346,7 @@ class MusicScene: SKScene{
             Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
                 
                 if objectCount >= 0 && (measure == 1 || measure == 2 || measure == 3 || measure == 4) {
-                    print("beat \(measure)")
+//                    print("beat \(measure)")
                     measure += 1
                     
                     objectCount -= 1
