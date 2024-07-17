@@ -115,7 +115,7 @@ class MusicScene: SKScene{
         setRectangles()
         setBall()
         
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay), repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + 0.5, repeats: false) { timer in
             self.playSound("Music1","wav")
             self.createPaper()
         }
@@ -253,7 +253,7 @@ class MusicScene: SKScene{
                     presentBallColor = .red
                     checkPaper(color: .red)
                 }
-
+                
                 dragType = .left
             }
             
@@ -283,15 +283,18 @@ class MusicScene: SKScene{
         
         if let objects = gameData?.objects {
             
-            if let paper = objects.last as? Paper{
-                if paper.node.position.y <= 600 && paper.node.position.y >= -200 && paper.color == color{
+            if let paper = objects.first as? Paper {
+                
+                if paper.node.position.y >= 10 && paper.node.position.y <= 800 && paper.color == color{
                     
                     paper.touched = true
                     
                     let generator = UIImpactFeedbackGenerator(style: .soft)
                     generator.prepare()
                     let animation: SKAction = SKAction.customAction(withDuration: 0, actionBlock: { [self] _,_ in
-                        gameData?.objects.removeFirst()
+                        if !(gameData?.objects.isEmpty)!{
+                            gameData?.objects.removeFirst()
+                        }
                     })
                     let sequence = SKAction.sequence([actionWait, animation])
                     paper.node.run(sequence)
@@ -299,13 +302,13 @@ class MusicScene: SKScene{
                     scorePoints += 10
                     scoreLabel.text = "Score: \(scorePoints)"
                 }
-                else{
-                    if paper.color != .empty{
-                        scorePoints -= 20
-                        scoreLabel.text = "Score: \(scorePoints)"
-                    }
-                    
-                }
+//                else{
+//                    if paper.color != .empty{
+//                        scorePoints -= 20
+//                        scoreLabel.text = "Score: \(scorePoints)"
+//                    }
+//                    
+//                }
             }
         }
     }
@@ -323,27 +326,36 @@ class MusicScene: SKScene{
         if seconds > musicStartDelay {
             
             Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + 0.5, repeats: false) { [self] timer in
+                setTimer()
                 if  !player!.isPlaying{
                     self.gameData?.gameState = .menu
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
                         resetGame()
                     })
                 }
-                setTimer()
+                
             }
             
         }
-        
-        
         
         
         if let objects = gameData?.objects {
             for (index, object) in objects.enumerated() {
                 if let paper = object as? Paper {
                     paper.update()
+                    if paper.remove{
+                        gameData?.objects.removeFirst()
+                    }
                 }
             }
         }
+        
+        if let objects = gameData?.objects.first {
+            
+            print(objects.node.position.y)
+        }
+        
+        
     }
     
     func calculateTime(currentTime: TimeInterval){
@@ -376,13 +388,14 @@ class MusicScene: SKScene{
             Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
                 
                 if objectCount >= 0 && (measure == 1 || measure == 2 || measure == 3 || measure == 4) {
+                    print("beat \(measure)")
                     measure += 1
                     
                     objectCount -= 1
                     gameData?.create(factory: PaperFactory(), delay: self.seconds)
                     self.renderLast()
                     
-                    if self.measure >= 4{
+                    if self.measure >= 5 {
                         self.measure = 1
                     }
                 }
