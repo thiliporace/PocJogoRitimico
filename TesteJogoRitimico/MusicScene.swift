@@ -338,7 +338,6 @@ class MusicScene: SKScene{
             
         }
         
-        
         if let objects = gameData?.objects {
             for (index, object) in objects.enumerated() {
                 if let paper = object as? Paper {
@@ -376,7 +375,7 @@ class MusicScene: SKScene{
         if !renderPaper{
             
             Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
-                let maxValue = 3
+                let maxValue = 5
                 let chosenShapeNumber = arc4random_uniform(UInt32(maxValue))
                 
                 if chosenShapeNumber == 1 && objectCount >= 0 {
