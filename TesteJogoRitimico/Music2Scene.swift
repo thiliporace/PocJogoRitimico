@@ -23,11 +23,9 @@ class Music2Scene: SKScene{
     var player: AVAudioPlayer?
     var play: Bool = false
     
-    var time: Float = 0
     var isRendering = false
     
     var musicStartDelay: Int = 1
-    var noteStartDelay: Int = 2
     
     var gameSecond: Int = 0
     var renderTime: TimeInterval = 0
@@ -35,7 +33,6 @@ class Music2Scene: SKScene{
     
     var currentMesure: Float =  1.0
     var beatCounter: Float = 1.0
-    
     var bpm: Float = 120.0
     var secondsPerBeat: Float = 0
     
@@ -140,9 +137,9 @@ class Music2Scene: SKScene{
             
         }
         
-        if gameSecond > noteStartDelay+musicStartDelay {
+        if gameSecond > musicStartDelay {
             Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { [self] timer in
-                noteGenerator()
+                conductorNotes()
             }
         }
         
@@ -164,81 +161,72 @@ class Music2Scene: SKScene{
     
     // MARK: Note generator
     
-    func noteGenerator(){
-        if !isRendering{
-//            offBeatNote()
-//            onBeatNote()
-//            
-//            isRendering = true
-            conductorNotes()
-        }
-    }
+//    func noteGenerator(){
+//        if !isRendering{
+//            conductorNotes()
+//        }
+//    }
     
     func conductorNotes(){
         var musicTimer: Timer?
         
         if !isRendering {
-            print("alo")
             musicTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
                 
                 beatCounter += 0.5
                 currentMesure += 0.5
+                
                 if self.currentMesure >= 5 {
                     self.currentMesure = 1
                 }
+                
                 switch currentMesure{
                 case 1:
-                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                     renderNote(type: .blueType)
                 case 2:
-                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                     renderNote(type: .blueType)
                 case 3:
-                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                     renderNote(type: .blueType)
                 case 4:
-                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                     renderNote(type: .blueType)
                 default:
                     break
                 }
+                
                 if beatCounter >= 0 && beatCounter <= 9 {
                     switch currentMesure{
                     case 3.5:
-                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                         renderNote(type: .blueType)
                     default:
                         break
                     }
                 }
+                
                 else if beatCounter >= 10 && beatCounter <= 15 {
                     switch currentMesure{
                     case 0.5:
-                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                         renderNote(type: .blueType)
                     case 1.5:
-                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                         renderNote(type: .blueType)
                     default:
                         break
                     }
                 }
+                
                 else if beatCounter >= 16 && beatCounter <= 25 {
                     switch currentMesure{
                     case 2.5:
-                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                         renderNote(type: .blueType)
                     case 3.5:
-                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                         renderNote(type: .blueType)
                     default:
                         break
                     }
                 }
+                
                 else if beatCounter >= 26 && beatCounter <= 32 {
                     switch currentMesure{
                     case 1.5:
-                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
                         renderNote(type: .blueType)
                     default:
                         break
@@ -247,33 +235,6 @@ class Music2Scene: SKScene{
             }
         }
         isRendering = true
-    }
-    
-    func offBeatNote(){
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self]timer in
-            let maxValue = 5
-            let chosenShapeNumber = arc4random_uniform(UInt32(maxValue))
-            if chosenShapeNumber == 1{
-                gameData?.createNFactory(factory: NoteFactory(), type: .pinkType)
-                renderNote(type: .pinkType)
-            }
-        }
-    }
-    
-    func onBeatNote(){
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
-            if (currentMesure == 1 || currentMesure == 2 || currentMesure == 3 || currentMesure == 4) {
-                print("beat \(currentMesure)")
-                currentMesure += 1
-                
-                gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
-                renderNote(type: .blueType)
-                
-                if self.currentMesure >= 5 {
-                    self.currentMesure = 1
-                }
-            }
-        }
     }
     
     // MARK: Funcs
@@ -288,6 +249,7 @@ class Music2Scene: SKScene{
     }
     
     func renderNote(type: colorType){
+        gameData?.createNFactory(factory: NoteFactory(), type: type)
         if let notes = (type == .pinkType ? gameData?.pinkNotes : gameData?.blueNotes){
             addChild(notes.last!.node)
         }
