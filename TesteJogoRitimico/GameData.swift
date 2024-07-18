@@ -36,14 +36,18 @@ import UIKit
         
     }
     
-    var notes: [NoteObject] = []
+    //var notes: [NoteObject] = []
+    var pinkNotes: [NoteObject] = []
+    var blueNotes: [NoteObject] = []
     func createNote(type: colorType){
         createNFactory(factory: NoteFactory(), type: type)
     }
     func createNFactory(factory: NFactory, type: colorType){
         
         let note: NoteObject = factory.createNoteObject(position: CGPoint(x: type == .pinkType ? 100 : UIScreen.main.bounds.width-100 , y: 50), type: type, travelTime: 1)
-        //print(note)
-        notes.append(note)
+        
+        type == .blueType ? blueNotes.append(note) : pinkNotes.append(note)
+        
+        //notes.append(note)
     }
 }

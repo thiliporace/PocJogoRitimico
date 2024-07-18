@@ -18,8 +18,8 @@ class Note: NoteObject{
         self.type = type
         
         self.node = SKShapeNode(circleOfRadius: 25)
-        self.node.fillColor = type == .blueType ? .blue : .gamePink
-        node.zPosition = 2
+        self.node.fillColor = type == .blueType ? .gameBlue : .gamePink
+        node.zPosition = 2 
         node.position = position
         
         let action = SKAction.moveTo(x: UIScreen.main.bounds.width/2, duration: travelTime)

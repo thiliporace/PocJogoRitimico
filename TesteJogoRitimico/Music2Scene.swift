@@ -26,13 +26,26 @@ class Music2Scene: SKScene{
     var time: Float = 0
     var isRendering = false
     
+    var musicStartDelay: Int = 1
+    var noteStartDelay: Int = 2
+    
+    var gameSecond: Int = 0
+    var renderTime: TimeInterval = 0
+    var changeTime: TimeInterval = 1
+    
+    var currentMesure: Float =  1.0
+    var beatCounter: Float = 1.0
+    
+    var bpm: Float = 120.0
+    var secondsPerBeat: Float = 0
+    
     func playSound(_ nome: String, _ ext: String) {
         guard let url = Bundle.main.url(forResource: nome, withExtension: ext) else { return }
         
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
-
+            
             player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
             
             guard let player = player else { return }
@@ -57,7 +70,11 @@ class Music2Scene: SKScene{
         setFinalArea()
         setLabel()
         
-        playSound("twoLane","wav")
+        secondsPerBeat = 60 / bpm
+        
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { timer in
+            self.playSound("twoLane","wav")
+        }
         player?.pause()
         player?.prepareToPlay()
     }
@@ -115,16 +132,18 @@ class Music2Scene: SKScene{
     // MARK: Update
     
     override func update(_ currentTime: TimeInterval) {
+        calculateTime(currentTime: currentTime)
+        
         if !play{
             play = true
             player?.play()
-                        
+            
         }
         
-        time = Float(player!.currentTime + 1.0)
-        
-        if(player!.currentTime > 0.5){
-            beatNote()
+        if gameSecond > noteStartDelay+musicStartDelay {
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { [self] timer in
+                noteGenerator()
+            }
         }
         
         checkFinalAreaCollision()
@@ -136,35 +155,157 @@ class Music2Scene: SKScene{
         let touch = touches.first?.location(in: self)
         
         if pinkButton.frame.contains(touch!) {
-            locationNote()
+            locationNote(type: .pinkType)
+        }
+        if blueButton.frame.contains(touch!) {
+            locationNote(type: .blueType)
+        }
+    }
+    
+    // MARK: Note generator
+    
+    func noteGenerator(){
+        if !isRendering{
+//            offBeatNote()
+//            onBeatNote()
+//            
+//            isRendering = true
+            conductorNotes()
+        }
+    }
+    
+    func conductorNotes(){
+        var musicTimer: Timer?
+        
+        if !isRendering {
+            print("alo")
+            musicTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
+                
+                beatCounter += 0.5
+                currentMesure += 0.5
+                if self.currentMesure >= 5 {
+                    self.currentMesure = 1
+                }
+                switch currentMesure{
+                case 1:
+                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                    renderNote(type: .blueType)
+                case 2:
+                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                    renderNote(type: .blueType)
+                case 3:
+                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                    renderNote(type: .blueType)
+                case 4:
+                    gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                    renderNote(type: .blueType)
+                default:
+                    break
+                }
+                if beatCounter >= 0 && beatCounter <= 9 {
+                    switch currentMesure{
+                    case 3.5:
+                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                        renderNote(type: .blueType)
+                    default:
+                        break
+                    }
+                }
+                else if beatCounter >= 10 && beatCounter <= 15 {
+                    switch currentMesure{
+                    case 0.5:
+                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                        renderNote(type: .blueType)
+                    case 1.5:
+                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                        renderNote(type: .blueType)
+                    default:
+                        break
+                    }
+                }
+                else if beatCounter >= 16 && beatCounter <= 25 {
+                    switch currentMesure{
+                    case 2.5:
+                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                        renderNote(type: .blueType)
+                    case 3.5:
+                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                        renderNote(type: .blueType)
+                    default:
+                        break
+                    }
+                }
+                else if beatCounter >= 26 && beatCounter <= 32 {
+                    switch currentMesure{
+                    case 1.5:
+                        gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                        renderNote(type: .blueType)
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+        isRendering = true
+    }
+    
+    func offBeatNote(){
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self]timer in
+            let maxValue = 5
+            let chosenShapeNumber = arc4random_uniform(UInt32(maxValue))
+            if chosenShapeNumber == 1{
+                gameData?.createNFactory(factory: NoteFactory(), type: .pinkType)
+                renderNote(type: .pinkType)
+            }
+        }
+    }
+    
+    func onBeatNote(){
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat), repeats: true) { [self] timer in
+            if (currentMesure == 1 || currentMesure == 2 || currentMesure == 3 || currentMesure == 4) {
+                print("beat \(currentMesure)")
+                currentMesure += 1
+                
+                gameData?.createNFactory(factory: NoteFactory(), type: .blueType)
+                renderNote(type: .blueType)
+                
+                if self.currentMesure >= 5 {
+                    self.currentMesure = 1
+                }
+            }
         }
     }
     
     // MARK: Funcs
     
-    func beatNote(){
-        if floor((time.truncatingRemainder(dividingBy: 1.5))) == 0 && !isRendering{
-                
-                isRendering = true
-                gameData?.createNFactory(factory: NoteFactory(), type: .pinkType)
-                renderNote()
+    func calculateTime(currentTime: TimeInterval){
+        if currentTime > renderTime{
+            if renderTime > 0{
+                gameSecond += 1
             }
-        else if floor(time.truncatingRemainder(dividingBy: 1.5)) != 0 && isRendering{
-                isRendering = false
-            }
+            renderTime = currentTime + changeTime
+        }
     }
     
-    func renderNote(){
-        if let notes = gameData?.notes {
+    func renderNote(type: colorType){
+        if let notes = (type == .pinkType ? gameData?.pinkNotes : gameData?.blueNotes){
             addChild(notes.last!.node)
         }
     }
     
-    func destroyNote(){
-        if (gameData?.notes) != nil {
-            gameData?.notes.first?.node.removeFromParent()
-            gameData?.notes.removeFirst()
+    func destroyNote(type: colorType){
+        if type == .pinkType{
+            if gameData?.pinkNotes != nil{
+                gameData?.pinkNotes.first?.node.removeFromParent()
+                gameData?.pinkNotes.removeFirst()
+            }
+        }else{
+            if gameData?.blueNotes != nil{
+                gameData?.blueNotes.first?.node.removeFromParent()
+                gameData?.blueNotes.removeFirst()
+            }
         }
+        
     }
     
     func labelAnimation(){
@@ -176,16 +317,16 @@ class Music2Scene: SKScene{
         feedbackLabel.run(sequence)
     }
     
-    func locationNote(){
-        if let notes = gameData?.notes{
+    func locationNote(type: colorType){
+        if let notes = (type == .pinkType ? gameData?.pinkNotes : gameData?.blueNotes) {
             if let note = notes.first as? Note{
                 if goodArea.frame.contains(note.node.position){
-                    destroyNote()
+                    destroyNote(type: type)
                     feedbackLabel.text = "Good!"
-                   
+                    
                 }
                 else{
-                    destroyNote()
+                    destroyNote(type: type)
                     feedbackLabel.text = "missed..."
                 }
                 labelAnimation()
@@ -194,10 +335,19 @@ class Music2Scene: SKScene{
     }
     
     func checkFinalAreaCollision(){
-        if let notes = gameData?.notes{
+        if let notes = gameData?.pinkNotes{
             if let note = notes.first as? Note{
                 if finalArea.frame.contains(note.node.position){
-                    destroyNote()
+                    destroyNote(type: note.type)
+                    feedbackLabel.text = "missed..."
+                    labelAnimation()
+                }
+            }
+        }
+        if let notes = gameData?.blueNotes{
+            if let note = notes.first as? Note{
+                if finalArea.frame.contains(note.node.position){
+                    destroyNote(type: note.type)
                     feedbackLabel.text = "missed..."
                     labelAnimation()
                 }
