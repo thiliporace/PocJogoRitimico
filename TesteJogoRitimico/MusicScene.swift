@@ -191,7 +191,7 @@ class MusicScene: SKScene{
     }
     
     func createPaper(){
-        objectCount = Int(player!.duration)
+        objectCount = Int(player!.duration) * 2
     }
     
     func setScore(){
@@ -349,7 +349,11 @@ class MusicScene: SKScene{
                 }
                 
                 switch measure{
+                case 1:
+                    spawnNote()
                 case 2:
+                    spawnNote()
+                case 3:
                     spawnNote()
                 case 4:
                     spawnNote()
@@ -357,18 +361,46 @@ class MusicScene: SKScene{
                     break
                 }
                 
-                switch songBeats{
-                case 4.5:
-                    spawnNote()
-                case 9.5:
-                    spawnNote()
-                case 8.5:
-                    spawnNote()
-                case 13.5:
-                    spawnNote()
-                default:
-                    break
+                if songBeats >= 0 && songBeats <= 9 {
+                    switch measure{
+                    case 3.5:
+                        spawnNote()
+                    default:
+                        break
+                    }
                 }
+                else if songBeats >= 10 && songBeats <= 15 {
+                    switch measure{
+                    case 0.5:
+                        spawnNote()
+                    case 1.5:
+                        spawnNote()
+                    default:
+                        break
+                    }
+                }
+                else if songBeats >= 16 && songBeats <= 25 {
+                    switch measure{
+                    case 2.5:
+                        spawnNote()
+                    case 3.5:
+                        spawnNote()
+                    default:
+                        break
+                    }
+                }
+                else if songBeats >= 26 && songBeats <= 32 {
+                    switch measure{
+                    case 1.5:
+                        spawnNote()
+                    default:
+                        break
+                    }
+                }
+                
+                
+                
+                
                 
             }
         }
@@ -377,7 +409,6 @@ class MusicScene: SKScene{
     
     func spawnNote(){
         if objectCount >= 0{
-            
             objectCount -= 1
             gameData?.create(factory: PaperFactory(), delay: self.seconds)
             self.renderLast()
