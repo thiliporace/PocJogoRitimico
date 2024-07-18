@@ -15,32 +15,15 @@ class MusicScene: SKScene{
     enum PresentBallColor{
         case red
         case blue
-//        case yellow
-//        case green
+    
     }
     
-    enum DragStages{
-        case inactive
-        case firstDrag
-        case secondDrag
-    }
+ 
 
-    enum FirstDragType{
-        case inactive
-        case up
-        case down
-        case right
-        case left
-//        case diagonalUpRight
-//        case diagonalUpLeft
-//        case diagonalDownLeft
-//        case diagonalDownRight
-    }
-    
     var gameData: GameData?
     
     let background = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 20000, height: 10000))
-//    var background: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
+    
     var paperNormal: SKSpriteNode = SKSpriteNode(imageNamed: "PaperNormal")
     var paperSigned: SKSpriteNode = SKSpriteNode(imageNamed: "PaperSigned")
     var stampDown: SKSpriteNode = SKSpriteNode(imageNamed: "StampDown")
@@ -48,9 +31,8 @@ class MusicScene: SKScene{
     
     var redRectangle = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 200, height: 140))
     var blueRectangle = SKShapeNode(rect: CGRect(x: 200, y: 0, width: 200, height: 140))
-//    var yellowRectangle = SKShapeNode(rect: CGRect(x: 0, y: 90, width: 200, height: 90))
-//    var greenRectangle = SKShapeNode(rect: CGRect(x: 200, y: 90, width: 200, height: 90))
-        
+    
+    
     var scoreLabel: SKLabelNode = SKLabelNode(text: "Score: ")
     
     var touched:Bool = false
@@ -58,50 +40,55 @@ class MusicScene: SKScene{
     let actionHide: SKAction = SKAction.hide()
     let actionShow: SKAction = SKAction.unhide()
     let actionWait: SKAction = SKAction.wait(forDuration: 0.2)
-
+    
     
     var bpm: Float = 120
     var secondsPerBeat: Float = 0
-    var measure: Float = 1
-    //0,5 player clock vem papel
-    //0,5 pra ele chegar
-    //primeiro 1,5   - 2
-    //segundo 3,5    - 4
-    //(tempo do player - 1,5) % 2,5 == 0 -> vem papel
+    var measure: Float = 0.5
+  
     var beatCount:Int = 0
     var timerIntervalPerBeat: TimeInterval = 0
     var musicDuration = 0
     
+    var startMusic: Bool = false
     var player: AVAudioPlayer?
     var play: Bool = false
-    var renderPaper = false
+    var startConductor = false
     var objectCount = 0
     var scorePoints = 0
     var comboPoints = 0
     
     var time: Float = 0
     
-    var dragStage: DragStages = .inactive
-    var dragType: FirstDragType = .inactive
     var presentBallColor: PresentBallColor = .red
     
     var point1: CGPoint = CGPoint(x: 0, y: 0)
     
     var renderTime: TimeInterval = 0
-    var changeTime: TimeInterval = 1
-    var seconds:Int = 0
+    var changeTime: TimeInterval = 0.25
+    var seconds:Double = 0
     var minutes:Int = 0
     
-    let musicStartDelay: Int = 1
+    let musicStartDelay: Double = 1.50
     
-    var songBeats: Float = 1
-//    let initialTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { timer in
-//        let musicTimer = Timer.scheduledTimer(timeInterval: 2.5, repeats: true)/*, target: self, selector: #selector(fazPapel()), userInfo: nil*/
-//    }
+    var songBeats: Float = 0.5
+    
+    var spawnBeat_1: Bool = false
+    var spawnBeat_1_5: Bool = false
+    var spawnBeat_2: Bool = false
+    var spawnBeat_2_5: Bool = false
+    var spawnBeat_3: Bool = false
+    var spawnBeat_3_5: Bool = false
+    var spawnBeat_4: Bool = false
+    var spawnBeat_4_5: Bool = false
+    
+  
     
     var checkArea : SKShapeNode = SKShapeNode(rectOf: CGSize(width: UIScreen.main.bounds.width, height: 120))
     
     override func didMove(to view: SKView) {
+        gameData?.gameState = .inGame
+        removeAllChildren()
         secondsPerBeat = 60 / bpm
         startGame()
     }
@@ -109,29 +96,30 @@ class MusicScene: SKScene{
     //MARK: SetGame
     
     func startGame(){
-        //removeAllChildren()
-        //gameState = .inGame
+  
+        setCheckArea()
+        setBackground()
+        
+        setRectangles()
+        player?.prepareToPlay()
+        print("start GAME SCENE")
+          
+        
+        
+        //MARK: Musica inicia
+        
+        player?.pause()
+        
+        
+        setScore()
+    }
+    func setCheckArea(){
         checkArea.position = CGPoint(x: UIScreen.main.bounds.width/2, y: UIScreen.main.bounds.height/2)
         checkArea.fillColor = .clear
         checkArea.strokeColor = .black
         checkArea.lineWidth = 4
         checkArea.zPosition = 100
         addChild(checkArea)
-        setBackground()
-//        setHands()
-        setRectangles()
-        
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { timer in
-            self.playSound("Music1","wav")
-            self.createPaper()
-        }
-        
-        //MARK: Musica inicia
-        
-        player?.pause()
-        player?.prepareToPlay()
-        
-        setScore()
     }
     
     func setBackground() {
@@ -142,19 +130,7 @@ class MusicScene: SKScene{
         
     }
     
-//    func setHands(){
-//        stampUp.position = CGPoint(x: 360, y: 480)
-//        stampUp.zPosition = 1
-//        
-//        addChild(stampUp)
-//        
-//        stampDown.position = stampUp.position
-//        stampDown.position.y = stampUp.position.y
-//        stampDown.zPosition = stampUp.zPosition
-//        stampDown.isHidden = true
-//        addChild(stampDown)
-//        
-//    }
+ 
     
     func setRectangles(){
         redRectangle.fillColor = .red
@@ -165,7 +141,7 @@ class MusicScene: SKScene{
         
         addChild(redRectangle)
         addChild(blueRectangle)
-
+        
     }
     
     func playSound(_ nome: String, _ ext: String) {
@@ -190,9 +166,7 @@ class MusicScene: SKScene{
         }
     }
     
-    func createPaper(){
-        objectCount = Int(player!.duration) * 2
-    }
+    
     
     func setScore(){
         scoreLabel.position = CGPoint(x: 250, y: 700)
@@ -207,7 +181,7 @@ class MusicScene: SKScene{
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first?.location(in: self)
-        
+        print("toque")
         if blueRectangle.frame.contains(touch!) {
             checkPaper(color: .blue)
         }
@@ -224,11 +198,13 @@ class MusicScene: SKScene{
         
         stampUp.run(sequenceShow)
         stampDown.run(sequenceHide)
-//        print("clicou: \(color)")
+        //        print("clicou: \(color)")
         if let objects = gameData?.objects {
             
             if let paper = objects.first as? Paper {
-                
+//                print(paper.state)
+//                print(paper.color)
+//                print(color)
                 if paper.state == 1 && paper.color == color{
                     
                     paper.touched = true
@@ -247,7 +223,7 @@ class MusicScene: SKScene{
                     scorePoints += 10
                     scoreLabel.text = "Score: \(scorePoints)"
                 }
-              
+                
             }
         }
     }
@@ -256,41 +232,37 @@ class MusicScene: SKScene{
         
         calculateTime(currentTime: currentTime)
         
-        if !play{
-            play = true
-            player?.play()
-            //MARK: Inicia player
+        if seconds >= musicStartDelay && !startMusic{
+            startMusic = true
+            print("music start")
+            self.playSound("Music1","wav")
+            
         }
         
-        if seconds > musicStartDelay {
+        if !startConductor && seconds >= (musicStartDelay - Double(secondsPerBeat + secondsPerBeat / 2)){
+            startConductor = true
+            print("notes start")
+            conductorNotes()
             
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { [self] timer in
-                
-                
-                setInitialTimer()
-                
-                
-                if  !player!.isPlaying{
-                    self.gameData?.gameState = .menu
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [self] in
-                        resetGame()
-                    })
-                }
-                
-            }
             
         }
         
         if let objects = gameData?.objects {
             if let paper = objects.first as? Paper{
                 paper.update()
+                
                 if checkArea.frame.contains(paper.node.position){
                     paper.state = 1
+//                    print("state 1")
                 }else{
                     if paper.isOnArea{
                         paper.touched = false
                         paper.state = 2
+//                        print("state 2")
+                        print(paper.state)
                     }
+//                    print("state 0")
+//                    print(paper.state)
                 }
                 if paper.remove && !(gameData?.objects.isEmpty)!{
                     gameData?.objects.removeFirst()
@@ -298,125 +270,209 @@ class MusicScene: SKScene{
             }
         }
         
-//        if let objects = gameData?.objects {
-//            for object in objects {
-//                if let paper = object as? Paper {
-//                    paper.update()
-//                    if paper.remove{
-//                        gameData?.objects.removeFirst()
-//                    }
-//                    if checkArea.frame.contains(paper.node.position){
-//                        paper.state = 1
-//                    }else{
-//                        if paper.isOnArea{
-//                            paper.state = 2
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        if gameData?.gameState == .menu{
+            gameData!.menu.gameData = gameData
+            gameData!.menu.scaleMode = .aspectFill
+            self.view?.presentScene(gameData!.menu)
+        }
         
-//        if let objects = gameData?.objects.first {
-//            print(objects.node.position.y)
-//        }
         
     }
     
     func calculateTime(currentTime: TimeInterval){
         if currentTime > renderTime{
             if renderTime > 0{
-                seconds += 1
-                if seconds == 60{
-                    seconds = 0
-                    minutes += 1
-                }
+                seconds += 0.25
+//                print("segundos: \(seconds)")
                 
             }
             renderTime = currentTime + changeTime
         }
     }
     
-    func setInitialTimer(){
+    func conductorNotes(){
         var initialTimer: Timer?
         
-        if !renderPaper {
-            initialTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
-                songBeats += 0.5
-                measure += 0.5
-                
-                if self.measure >= 5 {
-                    self.measure = 1
-                }
-                
-                switch measure{
-                case 1:
-                    spawnNote()
-                case 2:
-                    spawnNote()
-                case 3:
-                    spawnNote()
-                case 4:
-                    spawnNote()
-                default:
-                    break
-                }
-                
-                if songBeats >= 0 && songBeats <= 9 {
-                    switch measure{
-                    case 3.5:
-                        spawnNote()
-                    default:
-                        break
-                    }
-                }
-                else if songBeats >= 10 && songBeats <= 15 {
-                    switch measure{
-                    case 0.5:
-                        spawnNote()
-                    case 1.5:
-                        spawnNote()
-                    default:
-                        break
-                    }
-                }
-                else if songBeats >= 16 && songBeats <= 25 {
-                    switch measure{
-                    case 2.5:
-                        spawnNote()
-                    case 3.5:
-                        spawnNote()
-                    default:
-                        break
-                    }
-                }
-                else if songBeats >= 26 && songBeats <= 32 {
-                    switch measure{
-                    case 1.5:
-                        spawnNote()
-                    default:
-                        break
-                    }
-                }
-                
-                
-                
-                
-                
+        initialTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
+        
+            songBeats += 0.5
+            measure += 0.5
+            
+            
+            if self.measure >= 5 {
+                self.measure = 1
             }
+            
+            
+            if songBeats > 0{
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+//                print(spawnBeat_1)
+//                print(spawnBeat_1_5)
+//                print(spawnBeat_2)
+//                print(spawnBeat_2_5)
+//                print(spawnBeat_3)
+//                print(spawnBeat_3_5)
+//                print(spawnBeat_4)
+//                print(spawnBeat_4_5)
+            }
+            if songBeats >= 5  {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = false
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+          
+              
+            }
+            if songBeats >= 9 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+            }
+            if songBeats >= 13 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = false
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if songBeats >= 17 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = true
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if songBeats >= 21 {
+                spawnBeat_1 = false
+                spawnBeat_1_5 = false
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = true
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if songBeats >= 25 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+            }
+            if songBeats >= 29 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+            }
+            //Nao produz nota a partir daqui mesmo com a musica ainda tocando
+            if songBeats >= 33 {
+                spawnBeat_1 = false
+                spawnBeat_1_5 = false
+                spawnBeat_2 = false
+                spawnBeat_2_5 = false
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if songBeats >= 40 {
+               //reseta game
+                resetGame()
+            }
+            
+            switch measure{
+            case 1:
+                if spawnBeat_1{
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 1")
+                    spawnNote()
+                }
+            case 1.5:
+                if spawnBeat_1_5{
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 1.5")
+                    spawnNote()
+                }
+            case 2:
+                if spawnBeat_2{
+                    spawnNote()
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 2")
+                }
+            case 2.5:
+                if spawnBeat_2_5{
+                    spawnNote()
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 2.5")
+                }
+            case 3:
+                if spawnBeat_3{
+                    spawnNote()
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 3")
+                }
+            case 3.5:
+                if spawnBeat_3_5{
+                    spawnNote()
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 3.5")
+                }
+            case 4:
+                if spawnBeat_4{
+                    spawnNote()
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 4")
+                }
+            case 4.5:
+                if spawnBeat_4_5{
+                    spawnNote()
+//                    print("songBeats: \(songBeats)")
+//                    print("spawn 4.5")
+                }
+            default:
+                break
+            }
+            //                if !player!.isPlaying{
+            //                    initialTimer?.invalidate()
+            //                    initialTimer = nil
+            //                }
         }
-        renderPaper = true
     }
     
     func spawnNote(){
-        if objectCount >= 0{
-            objectCount -= 1
-            gameData?.create(factory: PaperFactory(), delay: self.seconds)
-            self.renderLast()
-            
-        }
-        
+        gameData?.create(factory: PaperFactory())
+        self.renderLast()
     }
-    
     
     
     func renderLast(){
@@ -427,19 +483,38 @@ class MusicScene: SKScene{
     
     func resetGame(){
         //MARK: Ending
-        
-//        gameState = GameState.menu
-//        removeAllChildren()
-//        setMenu()
-//        play = false
-//        renderPaper = true
-//        objectCount = 0
-//        scorePoints = 0
-//        scoreLabel = SKLabelNode(text: "Score: 0")
-//        gameData?.objects.removeAll()
+        secondsPerBeat = 0
+        songBeats = 0.5
+        measure = 0.5
+        scoreLabel = SKLabelNode(text: "Score: ")
+        beatCount = 0
+        timerIntervalPerBeat = 0
+        musicDuration = 0
+      
+        startMusic = false
+        startConductor = false
+        objectCount = 0
+        scorePoints = 0
+        comboPoints = 0
+        time = 0
+        renderTime = 0
+        changeTime = 0.25
+        seconds = 0
+        minutes = 0
+        songBeats = 0.5
+        spawnBeat_1 = false
+        spawnBeat_1_5 = false
+        spawnBeat_2 = false
+        spawnBeat_2_5 = false
+        spawnBeat_3 = false
+        spawnBeat_3_5 = false
+        spawnBeat_4 = false
+        spawnBeat_4_5 = false
+        gameData?.objects.removeAll()
+        gameData?.gameState = .menu
     }
     
     @objc func papel(){
-        renderPaper = true
+        startConductor = true
     }
 }

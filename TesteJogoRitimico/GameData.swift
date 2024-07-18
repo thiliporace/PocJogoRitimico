@@ -12,8 +12,9 @@ import UIKit
 @Observable class GameData{
     let back: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
     let paper: SKSpriteNode = SKSpriteNode(imageNamed: "PaperNormal")
-    
-    let notesStartDelay: Int = 2
+    let menu = MenuScene(size:UIScreen.main.bounds.size)
+
+    let notesStartDelay: Int = 0
     
     var gameState = GameState.menu
     enum GameState {
@@ -26,23 +27,12 @@ import UIKit
     var score: Int = 0
     
     func createPaper(){
-         create(factory: PaperFactory(), delay: 2)
+         create(factory: PaperFactory())
     }
    
-    func create(factory: GOFactory, delay: Int){
+    func create(factory: GOFactory){
         
-        if delay <= notesStartDelay{
-            let object: GameObject = factory.createEmptyGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
-            objects.append(object)
-            
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(notesStartDelay), repeats: false) { timer in
-                self.objects.removeAll()
-            }
-        }
-        else {
-            let object: GameObject = factory.createGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
-            objects.append(object)
-        }
-        
+        let object: GameObject = factory.createGameObject(position: CGPoint(x: 200/*-paper.size.width*/, y: 860) )
+        objects.append(object)
     }
 }

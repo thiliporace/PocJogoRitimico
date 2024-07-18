@@ -16,6 +16,7 @@ class MenuScene: SKScene{
     let game = MusicScene(size: UIScreen.main.bounds.size)
     
     override func didMove(to view: SKView) {
+        gameData?.gameState = .menu
         setMenu()
     }
     
@@ -32,6 +33,7 @@ class MenuScene: SKScene{
     }
     
     func setMenu(){
+        removeAllChildren()
         let playNode: SKLabelNode = SKLabelNode(text: "Play")
         playNode.fontSize = 40
         playNode.fontColor = .black
