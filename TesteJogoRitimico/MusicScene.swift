@@ -45,10 +45,6 @@ class MusicScene: SKScene{
     var bpm: Float = 120
     var secondsPerBeat: Float = 0
     var measure: Float = 0.5
-  
-    var beatCount:Int = 0
-    var timerIntervalPerBeat: TimeInterval = 0
-    var musicDuration = 0
     
     var startMusic: Bool = false
     var player: AVAudioPlayer?
@@ -58,8 +54,6 @@ class MusicScene: SKScene{
     var scorePoints = 0
     var comboPoints = 0
     
-    var time: Float = 0
-    
     var presentBallColor: PresentBallColor = .red
     
     var point1: CGPoint = CGPoint(x: 0, y: 0)
@@ -67,7 +61,6 @@ class MusicScene: SKScene{
     var renderTime: TimeInterval = 0
     var changeTime: TimeInterval = 0.25
     var seconds:Double = 0
-    var minutes:Int = 0
     
     let musicStartDelay: Double = 1.50
     
@@ -103,7 +96,6 @@ class MusicScene: SKScene{
         setRectangles()
         player?.prepareToPlay()
         print("start GAME SCENE")
-          
         
         
         //MARK: Musica inicia
@@ -243,7 +235,6 @@ class MusicScene: SKScene{
             startConductor = true
             print("notes start")
             conductorNotes()
-            
             
         }
         
@@ -487,21 +478,15 @@ class MusicScene: SKScene{
         songBeats = 0.5
         measure = 0.5
         scoreLabel = SKLabelNode(text: "Score: ")
-        beatCount = 0
-        timerIntervalPerBeat = 0
-        musicDuration = 0
       
         startMusic = false
         startConductor = false
         objectCount = 0
         scorePoints = 0
         comboPoints = 0
-        time = 0
         renderTime = 0
         changeTime = 0.25
         seconds = 0
-        minutes = 0
-        songBeats = 0.5
         spawnBeat_1 = false
         spawnBeat_1_5 = false
         spawnBeat_2 = false
