@@ -22,19 +22,29 @@ class Music2Scene: SKScene{
     
     var player: AVAudioPlayer?
     var play: Bool = false
+    var startMusic: Bool = false
     
     var isRendering = false
     
-    var musicStartDelay: Int = 1
+    var musicStartDelay: Double = 1.5
     
-    var gameSecond: Int = 0
+    var gameSecond: Double = 0
     var renderTime: TimeInterval = 0
-    var changeTime: TimeInterval = 1
+    var changeTime: TimeInterval = 0.25
     
-    var currentMesure: Float =  1.0
-    var beatCounter: Float = 1.0
+    var currentMeasure: Float =  0.5
+    var beatCounter: Float = 0.5
     var bpm: Float = 120.0
     var secondsPerBeat: Float = 0
+    
+    var spawnBeat_1: Bool = false
+    var spawnBeat_1_5: Bool = false
+    var spawnBeat_2: Bool = false
+    var spawnBeat_2_5: Bool = false
+    var spawnBeat_3: Bool = false
+    var spawnBeat_3_5: Bool = false
+    var spawnBeat_4: Bool = false
+    var spawnBeat_4_5: Bool = false
     
     func playSound(_ nome: String, _ ext: String) {
         guard let url = Bundle.main.url(forResource: nome, withExtension: ext) else { return }
@@ -69,11 +79,8 @@ class Music2Scene: SKScene{
         
         secondsPerBeat = 60 / bpm
         
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { timer in
-            self.playSound("twoLane","wav")
-        }
-        player?.pause()
         player?.prepareToPlay()
+        player?.pause()
     }
     
     // MARK: Set Elements
@@ -131,19 +138,24 @@ class Music2Scene: SKScene{
     override func update(_ currentTime: TimeInterval) {
         calculateTime(currentTime: currentTime)
         
-        if !play{
-            play = true
-            player?.play()
-            
+        if gameSecond >= musicStartDelay && !startMusic{
+            startMusic = true
+            self.playSound("twoLane", "wav")
         }
         
-        if gameSecond > musicStartDelay {
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(musicStartDelay) + Double(secondsPerBeat), repeats: false) { [self] timer in
-                conductorNotes()
-            }
+        if !play && gameSecond >= (musicStartDelay - Double(secondsPerBeat)){
+            play = true
+            
+            noteGenerator()
         }
         
         checkFinalAreaCollision()
+        
+        if gameData?.gameState == .menu{
+            gameData!.menu.gameData = gameData
+            gameData!.menu.scaleMode = .aspectFill
+            self.view?.presentScene(gameData!.menu)
+        }
     }
     
     // MARK: Touch began
@@ -161,79 +173,179 @@ class Music2Scene: SKScene{
     
     // MARK: Note generator
     
-//    func noteGenerator(){
-//        if !isRendering{
-//            conductorNotes()
-//        }
-//    }
+    func noteGenerator(){
+        if !isRendering{
+            conductorNotes()
+        }
+    }
     
     func conductorNotes(){
-        var musicTimer: Timer?
+        var initialTimer: Timer?
         
-        if !isRendering {
-            musicTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
-                
-                beatCounter += 0.5
-                currentMesure += 0.5
-                
-                if self.currentMesure >= 5 {
-                    self.currentMesure = 1
-                }
-                
-                switch currentMesure{
-                case 1:
-                    renderNote(type: .blueType)
-                case 2:
-                    renderNote(type: .blueType)
-                case 3:
-                    renderNote(type: .blueType)
-                case 4:
-                    renderNote(type: .blueType)
-                default:
-                    break
-                }
-                
-                if beatCounter >= 0 && beatCounter <= 9 {
-                    switch currentMesure{
-                    case 3.5:
-                        renderNote(type: .blueType)
-                    default:
-                        break
-                    }
-                }
-                
-                else if beatCounter >= 10 && beatCounter <= 15 {
-                    switch currentMesure{
-                    case 0.5:
-                        renderNote(type: .blueType)
-                    case 1.5:
-                        renderNote(type: .blueType)
-                    default:
-                        break
-                    }
-                }
-                
-                else if beatCounter >= 16 && beatCounter <= 25 {
-                    switch currentMesure{
-                    case 2.5:
-                        renderNote(type: .blueType)
-                    case 3.5:
-                        renderNote(type: .blueType)
-                    default:
-                        break
-                    }
-                }
-                
-                else if beatCounter >= 26 && beatCounter <= 32 {
-                    switch currentMesure{
-                    case 1.5:
-                        renderNote(type: .blueType)
-                    default:
-                        break
-                    }
-                }
+        initialTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(secondsPerBeat / 2), repeats: true) { [self] timer in
+            beatCounter += 0.5
+            currentMeasure += 0.5
+            if self.currentMeasure >= 5 {
+                self.currentMeasure = 1
             }
+            
+            if beatCounter > 0{
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+                //        print(spawnBeat_1)
+                //        print(spawnBeat_1_5)
+                //        print(spawnBeat_2)
+                //        print(spawnBeat_2_5)
+                //        print(spawnBeat_3)
+                //        print(spawnBeat_3_5)
+                //        print(spawnBeat_4)
+                //        print(spawnBeat_4_5)
+            }
+            if beatCounter >= 5 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = false
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if beatCounter >= 9 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+            }
+            if beatCounter >= 13 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = false
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if beatCounter >= 17 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = true
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if beatCounter >= 21 {
+                spawnBeat_1 = false
+                spawnBeat_1_5 = false
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = true
+                spawnBeat_3_5 = true
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if beatCounter >= 25 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+            }
+            if beatCounter >= 29 {
+                spawnBeat_1 = true
+                spawnBeat_1_5 = true
+                spawnBeat_2 = true
+                spawnBeat_2_5 = true
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = true
+                spawnBeat_4_5 = true
+            }
+            //Nao produz nota a partir daqui mesmo com a musica ainda tocando
+            if beatCounter >= 33 {
+                spawnBeat_1 = false
+                spawnBeat_1_5 = false
+                spawnBeat_2 = false
+                spawnBeat_2_5 = false
+                spawnBeat_3 = false
+                spawnBeat_3_5 = false
+                spawnBeat_4 = false
+                spawnBeat_4_5 = false
+            }
+            if beatCounter >= 40 {
+                resetGame()
+            }
+            switch currentMeasure{
+            case 1:
+                if spawnBeat_1{
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 1")
+                    renderNote(type:.blueType)
+                }
+            case 1.5:
+                if spawnBeat_1_5{
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 1.5")
+                    renderNote(type:.blueType)
+                }
+            case 2:
+                if spawnBeat_2{
+                    renderNote(type:.blueType)
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 2")
+                }
+            case 2.5:
+                if spawnBeat_2_5{
+                    renderNote(type:.blueType)
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 2.5")
+                }
+            case 3:
+                if spawnBeat_3{
+                    renderNote(type:.blueType)
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 3")
+                }
+            case 3.5:
+                if spawnBeat_3_5{
+                    renderNote(type:.blueType)
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 3.5")
+                }
+            case 4:
+                if spawnBeat_4{
+                    renderNote(type:.blueType)
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 4")
+                }
+            case 4.5:
+                if spawnBeat_4_5{
+                    renderNote(type:.blueType)
+                    //          print("beatCounter: \(beatCounter)")
+                    //          print("spawn 4.5")
+                }
+            default:
+                break
+            }
+            
         }
+        
         isRendering = true
     }
     
@@ -242,7 +354,7 @@ class Music2Scene: SKScene{
     func calculateTime(currentTime: TimeInterval){
         if currentTime > renderTime{
             if renderTime > 0{
-                gameSecond += 1
+                gameSecond += 0.25
             }
             renderTime = currentTime + changeTime
         }
@@ -316,4 +428,25 @@ class Music2Scene: SKScene{
             }
         }
     }
+    
+    func resetGame(){
+        //MARK: Ending
+        secondsPerBeat = 0
+        beatCounter = 0.5
+        currentMeasure = 0.5
+        startMusic = false
+        renderTime = 0
+        changeTime = 0.25
+        gameSecond = 0
+        spawnBeat_1 = false
+        spawnBeat_1_5 = false
+        spawnBeat_2 = false
+        spawnBeat_2_5 = false
+        spawnBeat_3 = false
+        spawnBeat_3_5 = false
+        spawnBeat_4 = false
+        spawnBeat_4_5 = false
+        gameData?.objects.removeAll()
+        gameData?.gameState = .menu
+      }
 }

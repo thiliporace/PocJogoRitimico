@@ -13,6 +13,8 @@ import UIKit
     let back: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
     let paper: SKSpriteNode = SKSpriteNode(imageNamed: "PaperNormal")
     
+    let menu = MenuScene(size: UIScreen.main.bounds.size)
+    
     var gameState = GameState.menu
     enum GameState {
         case menu
