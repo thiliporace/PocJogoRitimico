@@ -83,6 +83,8 @@ class Music2Scene: SKScene{
         
         player?.prepareToPlay()
         player?.pause()
+        
+        view?.isMultipleTouchEnabled = true
     }
     
     // MARK: Set Elements
@@ -184,6 +186,14 @@ class Music2Scene: SKScene{
         if blueButton.frame.contains(touch!) {
             locationNote(type: .blueType)
         }
+        
+        for _ in touches{
+            if touches.contains(where: {$0.location(in: self) == blueButton.position}) && touches.contains(where: {$0.location(in: self) == pinkButton.position}){
+                print("clicou nos dois")
+                locationNote(type: .blueAndPinkType)
+            }
+        }
+       
     }
     
     // MARK: Note generator
@@ -321,7 +331,7 @@ class Music2Scene: SKScene{
                 }
             case 2:
                 if spawnBeat_2{
-                    renderNote(type:.blueType)
+                    renderNote(type:.blueAndPinkType)
                     //          print("beatCounter: \(beatCounter)")
                     //          print("spawn 2")
                 }
@@ -339,7 +349,7 @@ class Music2Scene: SKScene{
                 }
             case 3.5:
                 if spawnBeat_3_5{
-                    renderNote(type:.blueType)
+                    renderNote(type:.blueAndPinkType)
                     //          print("beatCounter: \(beatCounter)")
                     //          print("spawn 3.5")
                 }
@@ -377,7 +387,7 @@ class Music2Scene: SKScene{
     
     func renderNote(type: colorType){
         gameData?.createNFactory(factory: NoteFactory(), type: type)
-        if let notes = (type == .pinkType ? gameData?.pinkNotes : gameData?.blueNotes){
+        if let notes = (type == .pinkType ? gameData?.pinkNotes : type == .blueType ? gameData?.blueNotes : gameData?.blueAndPinkNotes){
             addChild(notes.last!.node)
         }
     }
@@ -390,11 +400,17 @@ class Music2Scene: SKScene{
                 gameData?.pinkNotes.removeFirst()
             }
             
-        }else{
+        }else if type == .blueType{
             if gameData?.blueNotes != nil{
 //                print("deletou")
                 gameData?.blueNotes.first?.node.removeFromParent()
                 gameData?.blueNotes.removeFirst()
+            }
+        }
+        else{
+            if gameData?.blueAndPinkNotes != nil {
+                gameData?.blueAndPinkNotes.first?.node.removeFromParent()
+                gameData?.blueAndPinkNotes.removeFirst()
             }
         }
         
@@ -424,7 +440,7 @@ class Music2Scene: SKScene{
     
     func locationNote(type: colorType){
         var text = ""
-        if let notes = (type == .pinkType ? gameData?.pinkNotes : gameData?.blueNotes) {
+        if let notes = (type == .pinkType ? gameData?.pinkNotes : type == .blueType ? gameData?.blueNotes : gameData?.blueAndPinkNotes) {
             if let note = notes.first as? Note{
                 if greatArea.frame.contains(note.node.position) && goodArea.frame.contains(note.node.position){
                     destroyNote(type: type)
@@ -464,6 +480,16 @@ class Music2Scene: SKScene{
                     labelAnimation(text)
                 }
                 
+            }
+        }
+        
+        if let notes = gameData?.blueAndPinkNotes{
+            if let note = notes.first as? Note{
+                if finalArea.frame.contains(note.node.position){
+                    destroyNote(type: note.type)
+                    text = "missed..."
+                    labelAnimation(text)
+                }
             }
         }
     }
