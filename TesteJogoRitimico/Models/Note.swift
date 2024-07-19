@@ -22,7 +22,7 @@ class Note: NoteObject{
         node.zPosition = 2 
         node.position = position
         
-        let action = SKAction.moveTo(x: UIScreen.main.bounds.width/2, duration: travelTime)
+        let action = SKAction.moveTo(x: -100, duration: travelTime)
         //let remove = SKAction.removeFromParent()
         //let sequence = SKAction.sequence([action,remove])
     

@@ -108,7 +108,7 @@ class Music2Scene: SKScene{
     func setGoodArea(){
         let rectangle = SKShapeNode(rectOf: CGSize(width: 90, height: 90))
         rectangle.fillColor = .gray
-        rectangle.position = CGPoint(x: UIScreen.main.bounds.width/2, y: 45)
+        rectangle.position = CGPoint(x: 100, y: 300)
         goodArea = rectangle
         addChild(goodArea)
         goodArea.zPosition = 1
@@ -116,9 +116,9 @@ class Music2Scene: SKScene{
     
     func setFinalArea(){
         let rectangle = SKShapeNode(rectOf: CGSize(width: 1, height: 90))
-        rectangle.fillColor = .clear
-        rectangle.strokeColor = .clear
-        rectangle.position = CGPoint(x: UIScreen.main.bounds.width/2, y: 45)
+        rectangle.fillColor = .yellow
+        rectangle.strokeColor = .yellow
+        rectangle.position = CGPoint(x: 100, y: 300)
         finalArea = rectangle
         addChild(finalArea)
         finalArea.zPosition = 1
@@ -138,18 +138,19 @@ class Music2Scene: SKScene{
     override func update(_ currentTime: TimeInterval) {
         calculateTime(currentTime: currentTime)
         
+        checkFinalAreaCollision()
+        
         if gameSecond >= musicStartDelay && !startMusic{
             startMusic = true
             self.playSound("twoLane", "wav")
         }
         
-        if !play && gameSecond >= (musicStartDelay - Double(secondsPerBeat)){
+        //Aqui eu to antecipando o spawn das notas
+        if !play && gameSecond >= (musicStartDelay - Double(secondsPerBeat * 3 + 0.3)){
             play = true
             
             noteGenerator()
         }
-        
-        checkFinalAreaCollision()
         
         if gameData?.gameState == .menu{
             gameData!.menu.gameData = gameData
@@ -421,6 +422,7 @@ class Music2Scene: SKScene{
         if let notes = gameData?.blueNotes{
             if let note = notes.first as? Note{
                 if finalArea.frame.contains(note.node.position){
+                    print("aaaaaa")
                     destroyNote(type: note.type)
                     feedbackLabel.text = "missed..."
                     labelAnimation()

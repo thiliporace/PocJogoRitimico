@@ -46,7 +46,7 @@ import UIKit
     }
     func createNFactory(factory: NFactory, type: colorType){
         
-        let note: NoteObject = factory.createNoteObject(position: CGPoint(x: type == .pinkType ? 100 : UIScreen.main.bounds.width-100 , y: 50), type: type, travelTime: 1)
+        let note: NoteObject = factory.createNoteObject(position: CGPoint(x: type == .pinkType ? 100 : UIScreen.main.bounds.width-100 , y: 300), type: type, travelTime: 2)
         
         type == .blueType ? blueNotes.append(note) : pinkNotes.append(note)
         
