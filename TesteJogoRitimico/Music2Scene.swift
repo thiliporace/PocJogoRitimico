@@ -47,6 +47,9 @@ class Music2Scene: SKScene{
     var spawnBeat_4: Bool = false
     var spawnBeat_4_5: Bool = false
     
+    var pinkButtonClicked: Bool = false
+    var blueButtonClicked: Bool = false
+    
     func playSound(_ nome: String, _ ext: String) {
         guard let url = Bundle.main.url(forResource: nome, withExtension: ext) else { return }
         
@@ -72,6 +75,8 @@ class Music2Scene: SKScene{
     }
     
     func startGame(){
+        view?.isMultipleTouchEnabled = true
+        
         setBackground()
         setButtons()
         setGreatArea()
@@ -83,8 +88,6 @@ class Music2Scene: SKScene{
         
         player?.prepareToPlay()
         player?.pause()
-        
-        view?.isMultipleTouchEnabled = true
     }
     
     // MARK: Set Elements
@@ -101,12 +104,12 @@ class Music2Scene: SKScene{
     
     func setButtons(){
         pinkButton.position = CGPoint(x: 50, y: 50)
-        pinkButton.setScale(1.2)
+        pinkButton.setScale(2)
         addChild(pinkButton)
         pinkButton.zPosition = 1
         
         blueButton.position = CGPoint(x: UIScreen.main.bounds.width - 50, y: 50)
-        blueButton.setScale(1.2)
+        blueButton.setScale(2)
         addChild(blueButton)
         blueButton.zPosition = 1
     }
@@ -178,24 +181,43 @@ class Music2Scene: SKScene{
     // MARK: Touch began
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first?.location(in: self)
         
-        if pinkButton.frame.contains(touch!) {
-            locationNote(type: .pinkType)
-        }
-        if blueButton.frame.contains(touch!) {
-            locationNote(type: .blueType)
-        }
-        
-        for _ in touches{
-            if touches.contains(where: {$0.location(in: self) == blueButton.position}) && touches.contains(where: {$0.location(in: self) == pinkButton.position}){
-                print("clicou nos dois")
+        for touch in touches{
+            
+            if blueButton.frame.contains(touch.location(in: self)){
+                blueButtonClicked = true
+            }
+            if pinkButton.frame.contains(touch.location(in: self)){
+                pinkButtonClicked = true
+            }
+            
+            if pinkButtonClicked && blueButtonClicked {
+                print("dois")
                 locationNote(type: .blueAndPinkType)
             }
+            
         }
-       
+    
     }
     
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if pinkButtonClicked && !blueButtonClicked{
+            print("rosa")
+            locationNote(type: .pinkType)
+            
+        }
+        else if blueButtonClicked && !pinkButtonClicked{
+            print("azu")
+            locationNote(type: .blueType)
+            
+        }
+        
+        blueButtonClicked = false
+        pinkButtonClicked = false
+        
+    }
+
     // MARK: Note generator
     
     func noteGenerator(){
